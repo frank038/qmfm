@@ -19,5 +19,5 @@ storage masses.
 At the moment the hidden features are:
 - CTRL+s : the window size is saved; in fullscreen mode only this state is saved.
 - The program accept a folder or file path as argument.
-- When some html/htm files are copied or dropped into this program the associated 
+- When html/htm files are copied or dropped into this program the associated 
 folders will be copied too, and viceversa.
