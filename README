@@ -1,0 +1,4 @@
+Project started.
+Version 0.16.60
+Required: Pyqt5, PyXdg, xdg-utils.
+Just launch the file qmfm.py from the project directory.
