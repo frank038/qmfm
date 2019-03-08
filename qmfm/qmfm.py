@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# version 0.41.00
+# version 0.41.50
 
 #from PyQt5.QtCore import *
 #from PyQt5.QtWidgets import *
@@ -21,7 +21,7 @@ import subprocess
 import pwd
 from xdg.BaseDirectory import *
 from xdg.DesktopEntry import *
-from cfg import USE_THUMB,ITEM_WIDTH,ITEM_HEIGHT,ICON_SIZE,ICON_SIZE2,ITEM_SPACE,USE_BACKGROUND_COLOUR,ORED,OGREEN,OBLUE
+from cfg import FOLDER_TO_OPEN,USE_THUMB,ITEM_WIDTH,ITEM_HEIGHT,ICON_SIZE,ICON_SIZE2,ITEM_SPACE,USE_BACKGROUND_COLOUR,ORED,OGREEN,OBLUE
 
 
 class firstMessage(QWidget):
@@ -960,9 +960,15 @@ class MyQlist(QListView):
         elif len(item_list) == 1:
             try:
                 model = self.model()
-                index = self.selectionModel().selectedIndexes()[0]
-                file_icon = model.fileIcon(index)
-                pixmap = file_icon.pixmap(QSize(ICON_SIZE, ICON_SIZE))
+                for i in range(len(self.selectionModel().selectedIndexes())):
+                    index = self.selectionModel().selectedIndexes()[i]
+                    filepath = index.data(Qt.UserRole+1)
+                    if stat.S_ISREG(os.stat(filepath).st_mode) or stat.S_ISDIR(os.stat(filepath).st_mode) or stat.S_ISLNK(os.stat(filepath).st_mode):
+                        file_icon = model.fileIcon(index)
+                        pixmap = file_icon.pixmap(QSize(ICON_SIZE, ICON_SIZE))
+                        break
+                    else:
+                        continue
             except:
                 pixmap = QPixmap("icons/empty.svg").scaled(ICON_SIZE, ICON_SIZE, Qt.KeepAspectRatio, Qt.FastTransformation)
         else:
@@ -1295,8 +1301,17 @@ class MainWin(QWidget):
     
     def __init__(self, parent=None):
         super(MainWin, self).__init__(parent)
-        #HOME = os.path.expanduser('~')
+        
         HOME = os.getcwd()+"/folder"
+        
+        if FOLDER_TO_OPEN == "HOME":
+            HOME = os.path.expanduser('~')
+        else:
+            if os.path.exists(FOLDER_TO_OPEN):
+                if os.access(FOLDER_TO_OPEN, os.R_OK):
+                    HOME = FOLDER_TO_OPEN
+                else:
+                    HOME = os.path.expanduser('~')
         
         self.resize(int(WINW), int(WINH))
         if WINM == "True":
