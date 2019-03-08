@@ -1,4 +1,6 @@
 ### main program
+# directory to open
+FOLDER_TO_OPEN = TEST
 # thumbnailers: 0 no - 1 yes
 USE_THUMB = 1
 # icon cell width
