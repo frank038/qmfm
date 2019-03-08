@@ -929,7 +929,7 @@ class copyItems():
             self.button1.setEnabled(True)
             self.button2.setEnabled(False)
         if len(aa) == 4 and aa[3] != "":
-                MyMessageBox("Info", "Some errors with some items", "", aa[3])
+            MyMessageBox("Info", "Some errors with some items", "", aa[3])
 
     def fbutton1(self):
         self.mydialog.close()
