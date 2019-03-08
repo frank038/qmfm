@@ -1117,7 +1117,8 @@ class MyQlist(QListView):
                         nlist.append(ret)
             else:
                 items_skipped += "{}\n-----------\n".format(os.path.basename(ditem))
-        MyMessageBox("Info", "Items skipped because not readable", "", items_skipped)
+        if items_skipped != "":
+            MyMessageBox("Info", "Items skipped because not readable", "", items_skipped)
         return nlist
 
     def wrename(self, ditem, dest_path):
@@ -2875,7 +2876,8 @@ class LView(QBoxLayout):
                         nlist.append(ret)
             else:
                 items_skipped += "{}\n-----------\n".format(os.path.basename(ditem))
-        MyMessageBox("Info", "Items skipped because not readable", "", items_skipped)
+        if items_skipped != "":
+            MyMessageBox("Info", "Items skipped because not readable", "", items_skipped)
         return nlist
     
     def fpastAction(self):
