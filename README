@@ -26,3 +26,5 @@ At the moment the hidden features are:
 folders will be copied too, and viceversa.
 - Recycle bin tabs: the files have a contextual menu; folders can be opened in a
 new tab, and files opened with the default program, if any, with a double click.
+- Progress dialog during copying operations: the current copying operation cannot be
+interrupted, only the following ones can be interrupted.
