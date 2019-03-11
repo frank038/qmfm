@@ -1,5 +1,5 @@
 ### main program
-# directory to open
+# directory to open - full path
 FOLDER_TO_OPEN = "folder"
 # thumbnailers: 0 no - 1 yes
 USE_THUMB = 1
