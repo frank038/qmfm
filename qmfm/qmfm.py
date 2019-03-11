@@ -21,7 +21,7 @@ import subprocess
 import pwd
 from xdg.BaseDirectory import *
 from xdg.DesktopEntry import *
-from cfg import FOLDER_TO_OPEN,USE_THUMB,ITEM_WIDTH,ITEM_HEIGHT,ICON_SIZE,ICON_SIZE2,ITEM_SPACE,USE_BACKGROUND_COLOUR,ORED,OGREEN,OBLUE
+from cfg import FOLDER_TO_OPEN,USE_THUMB,ITEM_WIDTH,ITEM_HEIGHT,ICON_SIZE,ICON_SIZE2,ITEM_SPACE,USE_BACKGROUND_COLOUR,ORED,OGREEN,OBLUE,XDG_CACHE_LARGE
 
 
 class firstMessage(QWidget):
@@ -1211,7 +1211,7 @@ class IconProvider(QFileIconProvider):
         #
         file_icon = "Null"
         if hmd5 != "Null":
-            file_icon = QIcon(QPixmap("sh_thumbnails/large/"+str(hmd5)+".png").scaled(ICON_SIZE, ICON_SIZE, Qt.KeepAspectRatio, Qt.FastTransformation))
+            file_icon = QIcon(QPixmap(XDG_CACHE_LARGE+"/"+str(hmd5)+".png").scaled(ICON_SIZE, ICON_SIZE, Qt.KeepAspectRatio, Qt.FastTransformation))
         #
         return file_icon
     
