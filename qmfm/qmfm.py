@@ -2357,7 +2357,7 @@ class thumbThread(threading.Thread):
                         imime = QMimeDatabase().mimeTypeForFile(iitem, QMimeDatabase.MatchDefault)
                         hmd5 = create_thumbnail(item_fpath, imime.name())
 
-                        self.event.wait(0.1)
+                        self.event.wait(0.05)
             
             self.event.set()
         
