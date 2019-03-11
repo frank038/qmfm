@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# version 0.41.50
+# version 0.42.00
 
 #from PyQt5.QtCore import *
 #from PyQt5.QtWidgets import *
@@ -19,6 +19,7 @@ import glob
 import importlib
 import subprocess
 import pwd
+import threading
 from xdg.BaseDirectory import *
 from xdg.DesktopEntry import *
 from cfg import FOLDER_TO_OPEN,USE_THUMB,ITEM_WIDTH,ITEM_HEIGHT,ICON_SIZE,ICON_SIZE2,ITEM_SPACE,USE_BACKGROUND_COLOUR,ORED,OGREEN,OBLUE,XDG_CACHE_LARGE
@@ -2260,6 +2261,109 @@ class clabel(QLabel):
         
         super(clabel, self).setText(ntext)
 
+class IconProvider2(QFileIconProvider):
+    
+    def icon(self, fileInfo):
+        
+        try:
+            
+            if fileInfo.exists():
+                if fileInfo.isFile():
+                    
+                    if fileInfo.isSymLink():
+                        
+                        ireal_path = os.path.realpath(fileInfo.absoluteFilePath())
+                        
+                        if fileInfo.exists():
+                            imime = QMimeDatabase().mimeTypeForFile(ireal_path, QMimeDatabase.MatchDefault)
+                            if imime:
+                                try:
+                                    file_icon = QIcon.fromTheme(imime.iconName())
+                                    return file_icon
+                                except:
+                                    return QIcon("icons/empty.svg")
+                            else:
+                                try:
+                                    file_icon = QIcon.fromTheme("text-plain")
+                                    return file_icon
+                                except:
+                                    return QIcon("icons/empty.svg")
+                        else:
+                            return QIcon("icons/error2.svg")
+                    else:
+                        file_ap = fileInfo.absoluteFilePath()
+                        if fileInfo.exists():
+                            imime = QMimeDatabase().mimeTypeForFile(file_ap, QMimeDatabase.MatchDefault)
+                            if imime:
+                                try:
+                                    file_icon = QIcon.fromTheme(imime.iconName())
+                                    return file_icon
+                                except:
+                                    return QIcon("icons/empty.svg")
+                            else:
+                                try:
+                                    file_icon = QIcon.fromTheme("text-plain")
+                                    return file_icon
+                                except:
+                                    return QIcon("icons/error2.svg")
+                        else:
+                            return QIcon("icons/error2.svg")
+                elif fileInfo.isDir():
+                    if fileInfo.exists():
+                        if fileInfo.isSymLink():
+                            try:
+                                return QIcon.fromTheme("inode-directory")
+                            except:
+                                return QIcon("icons/folder.svg")
+                        else:
+                            try:
+                                return QIcon.fromTheme("inode-directory")
+                            except:
+                                return QIcon("icons/folder.svg")
+        
+                    else:
+                        return QIcon("icons/error2.svg")
+                else:
+                    file_icon = QIcon.fromTheme("text-plain")
+                    return file_icon
+            else:
+                print("non esiste::", fileInfo.absoluteFilePath())
+                return QIcon("icons/error2.svg")
+        except:
+            return QIcon("icons/empty.svg")
+
+class thumbThread(threading.Thread):
+    
+    def __init__(self, fpath, fileModel, listview):
+        threading.Thread.__init__(self)
+        self.event = threading.Event()
+        self.fpath = fpath
+        self.fileModel = fileModel
+        self.listview = listview
+    
+    def run(self):
+        list_dir = os.listdir(self.fpath)
+        
+        while not self.event.is_set():
+            for iitem in list_dir:
+                item_fpath = os.path.join(self.fpath, iitem)
+
+                if os.path.exists(item_fpath):
+                    
+                    if stat.S_ISREG(os.stat(item_fpath).st_mode):
+                        
+                        hmd5 = "Null"
+                        
+                        imime = QMimeDatabase().mimeTypeForFile(iitem, QMimeDatabase.MatchDefault)
+                        hmd5 = create_thumbnail(item_fpath, imime.name())
+
+                        self.event.wait(0.1)
+            
+            self.event.set()
+        
+        self.fileModel.setIconProvider(IconProvider())
+        self.listview.viewport().update()
+
 class LView(QBoxLayout):
     def __init__(self, LVDIR, window, flag, parent=None):
         super(LView, self).__init__(QBoxLayout.TopToBottom, parent)
@@ -2293,7 +2397,7 @@ class LView(QBoxLayout):
         self.fileModel.setFilter(QDir.AllDirs | QDir.Files | QDir.NoDotAndDotDot | QDir.System)
         self.listview.setModel(self.fileModel)
         self.listview.setItemDelegate(itemDelegate())
-        self.fileModel.setIconProvider(IconProvider())
+        self.fileModel.setIconProvider(IconProvider2())
         #
         path = self.lvDir
         self.listview.setRootIndex(self.fileModel.setRootPath(path))
@@ -2322,6 +2426,9 @@ class LView(QBoxLayout):
         self.listview.selectionModel().selectionChanged.connect(self.lselectionChanged)
  
         self.tabLabels()
+        
+        thread = thumbThread(self.lvDir, self.fileModel, self.listview)
+        thread.start()
     
     def tabLabels(self):
         self.label1.setText("Path")
