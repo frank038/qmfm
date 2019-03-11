@@ -1304,8 +1304,6 @@ class MainWin(QWidget):
     def __init__(self, parent=None):
         super(MainWin, self).__init__(parent)
         
-        HOME = os.getcwd()+"/folder"
-        
         if FOLDER_TO_OPEN == "HOME":
             HOME = os.path.expanduser('~')
         else:
@@ -1314,6 +1312,8 @@ class MainWin(QWidget):
                     HOME = FOLDER_TO_OPEN
                 else:
                     HOME = os.path.expanduser('~')
+            else:
+                HOME = os.path.expanduser('~')
         
         self.resize(int(WINW), int(WINH))
         if WINM == "True":
