@@ -2749,7 +2749,7 @@ class LView(QBoxLayout):
                         menu.addSeparator()
                     elif os.path.isdir(os.path.join(self.lvDir, itemName)):
                         newtabAction = QAction("Open in a new tab")
-                        newtabAction.triggered.connect(lambda:self.fnewtabAction(os.path.join(self.lvDir, itemName), 1))
+                        newtabAction.triggered.connect(lambda:self.fnewtabAction(os.path.join(self.lvDir, itemName), self.flag))
                         menu.addAction(newtabAction)
                         menu.addSeparator()
             
