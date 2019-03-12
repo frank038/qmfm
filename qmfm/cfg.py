@@ -3,9 +3,9 @@
 FOLDER_TO_OPEN = "folder"
 # thumbnailers: 0 no - 1 yes
 USE_THUMB = 1
-# icon cell width
+# icon cell width - greater than ICON_SIZE
 ITEM_WIDTH = 164
-# icon cell height
+# icon cell height - same as ITEM_WIDTH
 ITEM_HEIGHT = 164
 # icon size
 ICON_SIZE = 96
