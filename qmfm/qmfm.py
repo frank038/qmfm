@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# version 0.42.00
+# version 0.42.50
 
 #from PyQt5.QtCore import *
 #from PyQt5.QtWidgets import *
@@ -1848,6 +1848,61 @@ class RestoreTrashedItems():
         #self.deletiondate = ""
 
 
+class MediaItemDelegate(QItemDelegate):
+
+    def __init__(self, parent=None):
+        super(MediaItemDelegate, self).__init__(parent)
+    
+    def paint(self, painter, option, index):
+        
+        ppath = index.data()
+        iicon = index.data(QFileSystemModel.FileIconRole)
+        
+        st1 = index.data()
+        st = QStaticText(st1)
+        
+        painter.save()
+        if option.state & QStyle.State_Selected:
+            
+            if ITEM_WIDTH > st.size().width():
+                xpad = (ITEM_WIDTH - ICON_SIZE) / 2
+            else:
+                xpad = (st.size().width() - ICON_SIZE) / 2
+            
+            painter.setBrush(option.palette.color(QPalette.Highlight))
+            painter.setPen(option.palette.color(QPalette.Highlight))
+            painter.drawRoundedRect(QRect(option.rect.x()+xpad,option.rect.y(),ICON_SIZE,ICON_SIZE), 3.0, 3.0, Qt.AbsoluteSize)
+        painter.restore()
+        
+        pixmap = iicon.pixmap(ICON_SIZE)
+        
+        if ITEM_WIDTH > st.size().width():
+            xpad = (ITEM_WIDTH - ICON_SIZE) / 2
+        else:
+            xpad = (st.size().width() - ICON_SIZE) / 2
+        
+        painter.drawPixmap(option.rect.x() + xpad,option.rect.y(), -1,-1, pixmap,0,0,-1,-1)
+        
+        txpad = 0
+        if ITEM_WIDTH > st.size().width():
+            txpad = (ITEM_WIDTH - st.size().width()) / 2
+            print("XPAD1", txpad, index.data())
+        
+        painter.drawStaticText(option.rect.x() + txpad, option.rect.y()+ICON_SIZE, st)
+        painter.setRenderHint(QPainter.Antialiasing, True)
+        
+    def sizeHint(self, option, index):
+        dicon = ICON_SIZE
+        st1 = index.data()
+        st = QStaticText(st1)
+        dtext = st.size()
+        if ITEM_WIDTH > dtext.width():
+            X = ITEM_WIDTH
+        else:
+            X = dtext.width()
+        Y = ICON_SIZE + dtext.height()
+        return QSize(int(X),int(Y))
+
 class openDisks(QBoxLayout):
     def __init__(self, window, parent=None):
         super(openDisks, self).__init__(QBoxLayout.TopToBottom, parent)
@@ -1861,8 +1916,7 @@ class openDisks(QBoxLayout):
             #
             ilist = QListView()
             ilist.setViewMode(QListView.IconMode)
-            ilist.setGridSize(QSize(292, 128))
-            ilist.setSpacing(10)
+            ilist.setSpacing(50)
             ilist.setMovement(QListView.Static)
             ilist.setFlow(QListView.LeftToRight)
             # background color
@@ -1880,6 +1934,7 @@ class openDisks(QBoxLayout):
             ilist.setResizeMode(QListView.Adjust)
             self.model = QStandardItemModel(ilist)
             ilist.setModel(self.model)
+            ilist.setItemDelegate(MediaItemDelegate())
             #
             obox = QBoxLayout(QBoxLayout.LeftToRight)
             obox.setContentsMargins(QMargins(5,5,5,5))
@@ -2075,20 +2130,20 @@ class openDisks(QBoxLayout):
     def getDevice(self, media_type, drive_type, connection_bus):
 
         if connection_bus == "usb" and drive_type == 0:
-            return "icons/media-removable.png"
+            return "icons/media-removable.svg"
         
         if "flash" in media_type:
-            return "icons/media-flash.png"
+            return "icons/media-flash.svg"
         elif "optical" in media_type:
-            return "icons/media-optical.png"
+            return "icons/media-optical.svg"
         
         if drive_type == 0:
-            return "icons/drive-harddisk.png"
+            return "icons/drive-harddisk.svg"
         
         elif drive_type == 5:
-            return "icons/media-optical.png"
+            return "icons/media-optical.svg"
         
-        return "icons/drive-harddisk.png"
+        return "icons/drive-harddisk.svg"
 
     def nameMedia(self, media_type, drive_type, ddevice):
         if "loop" in ddevice:
