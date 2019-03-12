@@ -2541,7 +2541,16 @@ class LView(QBoxLayout):
         self.label1.setText("Name")
         self.label5.setText(file_info.fileName(), self.window.size().width())
         self.label2.setText("Path")
-        self.label6.setText(self.lvDir, self.window.size().width())
+        
+        if os.path.islink(path):
+            linked_target = os.readlink(path)
+            if os.path.exists(linked_target):
+                self.label6.setText("link to {}".format(linked_target), self.window.size().width())
+            else:
+                self.label6.setText("broken link to {}".format(linked_target), self.window.size().width())
+        else:
+            self.label6.setText(self.lvDir, self.window.size().width())
+        
         self.label3.setText("Type")
         imime = QMimeDatabase().mimeTypeForFile(path, QMimeDatabase.MatchDefault)
         self.label7.setText(imime.name())
