@@ -1886,7 +1886,6 @@ class MediaItemDelegate(QItemDelegate):
         txpad = 0
         if ITEM_WIDTH > st.size().width():
             txpad = (ITEM_WIDTH - st.size().width()) / 2
-            print("XPAD1", txpad, index.data())
         
         painter.drawStaticText(option.rect.x() + txpad, option.rect.y()+ICON_SIZE, st)
         painter.setRenderHint(QPainter.Antialiasing, True)
