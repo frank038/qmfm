@@ -1304,6 +1304,8 @@ class MainWin(QWidget):
     def __init__(self, parent=None):
         super(MainWin, self).__init__(parent)
         
+        self.setWindowIcon(QIcon("icons/file-manager-blue"))
+        
         if FOLDER_TO_OPEN == "HOME":
             HOME = os.path.expanduser('~')
         else:
