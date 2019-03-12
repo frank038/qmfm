@@ -2749,7 +2749,7 @@ class LView(QBoxLayout):
                         menu.addSeparator()
                     elif os.path.isdir(os.path.join(self.lvDir, itemName)):
                         newtabAction = QAction("Open in a new tab")
-                        newtabAction.triggered.connect(lambda:self.fnewtabAction(os.path.join(self.lvDir, itemName), self.flag))
+                        newtabAction.triggered.connect(lambda:self.fnewtabAction(os.path.join(self.lvDir, itemName), 1))
                         menu.addAction(newtabAction)
                         menu.addSeparator()
             
@@ -2914,12 +2914,7 @@ class LView(QBoxLayout):
     def fnewtabAction(self, ldir, flag):
 
         if os.access(ldir, os.R_OK):
-            page = QWidget()
-            clv = LView(ldir, self.window, flag)
-            self.window.mtab.addTab(page, os.path.basename(ldir))
-            self.window.mtab.setTabToolTip(self.window.mtab.count()-1, ldir)
-            page.setLayout(clv)
-            self.window.mtab.setCurrentIndex(self.window.mtab.count()-1)
+            self.window.openDir(ldir, flag)
         else:
             MyDialog("Error", "Cannot open the folder: "+os.path.basename(ldir))
     
