@@ -2166,7 +2166,7 @@ class openDisks(QBoxLayout):
         if not index.data(Qt.UserRole+12):
             npart = index.data(Qt.UserRole).split("/")[-1]
             if index.data(Qt.UserRole+10) != "N" and index.data(Qt.UserRole+11) != "N":
-                self.label6.setText(index.data(Qt.UserRole+10)+" "+index.data(Qt.UserRole+11)+" - "+npart, self.window.width())
+                self.label6.setText(npart+" - "+index.data(Qt.UserRole+10)+" "+index.data(Qt.UserRole+11), self.window.width())
             else:
                 self.label6.setText(npart, self.window.width())
         else:
