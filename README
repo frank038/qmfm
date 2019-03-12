@@ -1,5 +1,5 @@
 Stage: alpha testing.
-Version 0.42.00
+Version 0.42.50
 Required: Pyqt5, PyXdg, xdg-utils, python3-dbus.
 Just launch the file qmfm.py from the project directory.
 
