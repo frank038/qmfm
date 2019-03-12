@@ -89,5 +89,6 @@ class ModuleCustom():
     def __init__(self, mainLView):
         index = mainLView.selection[0]
         path = mainLView.fileModel.fileInfo(index).absoluteFilePath()
-        if stat.S_ISREG(os.stat(path).st_mode):
-            cs = checkSum(path)
+        if os.access(path, os.R_OK):
+            if stat.S_ISREG(os.stat(path).st_mode):
+                cs = checkSum(path)
