@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# version 0.42.50
+# version 0.43.00
 
 #from PyQt5.QtCore import *
 #from PyQt5.QtWidgets import *
@@ -124,6 +124,33 @@ for el in reversed(mmod_custom):
 MMTAB = object
 TCOMPUTER = 0
 
+class clabel2(QLabel):
+    
+    def __init__(self, parent=None):
+        super(clabel2, self).__init__(parent)
+    
+    def setText(self, text, wWidth):
+        
+        boxWidth = wWidth*QApplication.instance().devicePixelRatio()
+        font = self.font()
+        metric = QFontMetrics(font)
+        string = text
+        ctemp = ""
+        ctempT = ""
+        for cchar in string:
+            ctemp += str(cchar)
+            width = metric.width(ctemp)
+            if width < boxWidth:
+                ctempT += str(cchar)
+                continue
+            else:
+                ctempT += str(cchar)
+                ctempT += "\n"
+                ctemp = str(cchar)
+        
+        ntext = ctempT
+        
+        super(clabel2, self).setText(ntext)
 
 class MyDialog(QDialog):
     def __init__(self, *args, parent=None):
@@ -160,43 +187,48 @@ class MyMessageBox(QMessageBox):
 class MyDialogRename(QDialog):
     def __init__(self, *args, parent=None):
         super(MyDialogRename, self).__init__(parent)
-        #
+        
         self.setWindowTitle("Rename")
         self.setWindowModality(Qt.ApplicationModal)
-        self.resize(400,300)
-        grid = QGridLayout()
-        grid.setContentsMargins(5,5,5,5)
-        #
+        self.resize(500,300)
+        
+        mbox = QBoxLayout(QBoxLayout.TopToBottom)
+        mbox.setContentsMargins(5,5,5,5)
+        self.setLayout(mbox)
+        
         label1 = QLabel("Old name:")
-        label1.setWordWrap(True)
-        grid.addWidget(label1, 0, 1, 1, 4, Qt.AlignCenter)
-        label2 = QLabel(args[0])
-        grid.addWidget(label2, 1, 1, 1, 4, Qt.AlignCenter)
-        #
+        mbox.addWidget(label1)
+        
+        label2 = clabel2()
+        label2.setText(args[0], self.size().width()-12)
+        mbox.addWidget(label2)
+        
         label3 = QLabel("New name:")
-        grid.addWidget(label3, 2, 1, 1, 4, Qt.AlignCenter)
-        #
+        mbox.addWidget(label3)
+        
         self.lineedit = QLineEdit()
         self.lineedit.setText(args[0])
         self.lineedit.setCursorPosition(0)
         args_basename = QFileInfo(args[0]).baseName()
         len_args_basename = len(args_basename)
         self.lineedit.setSelection(0 , len_args_basename)
-        grid.addWidget(self.lineedit, 3, 1, 1, 4, Qt.AlignCenter)
-        #
+        mbox.addWidget(self.lineedit)
+        
+        box = QBoxLayout(QBoxLayout.LeftToRight)
+        mbox.addLayout(box)
+        
         button1 = QPushButton("OK")
-        grid.addWidget(button1, 4, 1, 1, 1, Qt.AlignCenter)
+        box.addWidget(button1)
         button1.clicked.connect(lambda:self.faccept(args[0]))
-        #
+        
         button2 = QPushButton("Skip")
-        grid.addWidget(button2, 4, 3, 1, 1, Qt.AlignCenter)
+        box.addWidget(button2)
         button2.clicked.connect(self.fskip)
-        #
+        
         button3 = QPushButton("Cancel")
-        grid.addWidget(button3, 4, 4, 1, 1, Qt.AlignCenter)
+        box.addWidget(button3)
         button3.clicked.connect(self.fcancel)
-        #
-        self.setLayout(grid)
+        
         self.Value = ""
         self.exec_()
         
@@ -208,7 +240,7 @@ class MyDialogRename(QDialog):
             if self.lineedit.text() != item_name:
                 self.Value = self.lineedit.text()
                 self.close()
-
+    
     def fskip(self):
         self.Value = -2
         self.close() 
@@ -217,49 +249,53 @@ class MyDialogRename(QDialog):
         self.Value = -1
         self.close()
 
-
 class MyDialogRename2(QDialog):
     def __init__(self, *args, parent=None):
         super(MyDialogRename2, self).__init__(parent)
         self.item_name = args[0]
         self.dest_path = args[1]
         self.itemPath = os.path.join(self.dest_path, self.item_name)
-        #
+        
         self.setWindowTitle("Rename")
         self.setWindowModality(Qt.ApplicationModal)
-        self.resize(400,300)
-        grid = QGridLayout()
-        grid.setContentsMargins(5,5,5,5)
-        #
+        self.resize(500,300)
+        
+        mbox = QBoxLayout(QBoxLayout.TopToBottom)
+        mbox.setContentsMargins(5,5,5,5)
+        self.setLayout(mbox)
+        
         label1 = QLabel("Old name:")
-        label1.setWordWrap(True)
-        grid.addWidget(label1, 0, 1, 1, 4, Qt.AlignCenter)
-        label2 = QLabel(self.item_name)
-        grid.addWidget(label2, 1, 1, 1, 4, Qt.AlignCenter)
-        #
+        mbox.addWidget(label1)
+        
+        label2 = clabel2()
+        label2.setText(self.item_name, self.size().width()-12)
+        mbox.addWidget(label2)
+        
         label3 = QLabel("New name:")
-        grid.addWidget(label3, 2, 1, 1, 4, Qt.AlignCenter)
-        #
+        mbox.addWidget(label3)
+        
         self.lineedit = QLineEdit()
         self.lineedit.setText(self.item_name)
         self.lineedit.setCursorPosition(0)
         args_basename = QFileInfo(self.item_name).baseName()
         len_args_basename = len(args_basename)
         self.lineedit.setSelection(0 , len_args_basename)
-        grid.addWidget(self.lineedit, 3, 1, 1, 4, Qt.AlignCenter)
-        #
+        mbox.addWidget(self.lineedit)
+        
+        box = QBoxLayout(QBoxLayout.LeftToRight)
+        mbox.addLayout(box)
+        
         button1 = QPushButton("OK")
-        grid.addWidget(button1, 4, 1, 1, 1, Qt.AlignCenter)
+        box.addWidget(button1)
         button1.clicked.connect(lambda:self.faccept(self.item_name))
-        #
+        
         button3 = QPushButton("Cancel")
-        grid.addWidget(button3, 4, 4, 1, 1, Qt.AlignCenter)
+        box.addWidget(button3)
         button3.clicked.connect(self.fcancel)
-        #
-        self.setLayout(grid)
+        
         self.Value = ""
         self.exec_()
-
+    
     def getValues(self):
         return self.Value
     
