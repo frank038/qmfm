@@ -6,7 +6,7 @@ import os
 import stat
 from PyQt5.QtWidgets import (QDialog,QGridLayout,QLabel,QPushButton,QComboBox,QLineEdit)
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import (QPalette,QColor)
+from PyQt5.QtGui import (QPalette,QColor,QIcon)
 import subprocess
 import shutil
 
@@ -22,6 +22,7 @@ def mmodule_type():
 class checkSum(QDialog):
     def __init__(self, path, parent=None):
         super(checkSum, self).__init__(parent)
+        self.setWindowIcon(QIcon("icons/file-manager-red.svg"))
         self.setWindowTitle("Checksum")
         self.setWindowModality(Qt.ApplicationModal)
         self.resize(600,300)
