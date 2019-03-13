@@ -176,6 +176,7 @@ class MyMessageBox(QMessageBox):
     def __init__(self, *args, parent=None):
         super(MyMessageBox, self).__init__(parent)
         self.setIcon(QMessageBox.Information)
+        self.setWindowIcon(QIcon("icons/file-manager-red.svg"))
         self.setWindowTitle(args[0])
         self.setText(args[1])
         self.setInformativeText(args[2])
@@ -730,7 +731,8 @@ class execfileDialog(QDialog):
         self.itemPath = itemPath
         self.flag = flag
         #
-        self.setWindowTitle("")
+        self.setWindowIcon(QIcon("icons/file-manager-red.svg"))
+        self.setWindowTitle("Info")
         self.setWindowModality(Qt.ApplicationModal)
         self.resize(600, 100)
         #
@@ -914,7 +916,8 @@ class copyItems():
 
     def myDialog(self):
         self.mydialog = QDialog()
-        self.mydialog.setWindowTitle("title")
+        self.mydialog.setWindowIcon(QIcon("icons/file-manager-red.svg"))
+        self.mydialog.setWindowTitle("Copying...")
         self.mydialog.setWindowModality(Qt.ApplicationModal)
         self.mydialog.resize(400,300)
         # 
