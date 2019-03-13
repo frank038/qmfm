@@ -155,6 +155,7 @@ class clabel2(QLabel):
 class MyDialog(QDialog):
     def __init__(self, *args, parent=None):
         super(MyDialog, self).__init__(parent)
+        self.setWindowIcon(QIcon("icons/file-manager-red.svg"))
         self.setWindowTitle(args[0])
         self.setWindowModality(Qt.ApplicationModal)
         self.resize(400,300)
@@ -188,6 +189,7 @@ class MyDialogRename(QDialog):
     def __init__(self, *args, parent=None):
         super(MyDialogRename, self).__init__(parent)
         
+        self.setWindowIcon(QIcon("icons/file-manager-red.svg"))
         self.setWindowTitle("Rename")
         self.setWindowModality(Qt.ApplicationModal)
         self.resize(500,300)
@@ -256,6 +258,7 @@ class MyDialogRename2(QDialog):
         self.dest_path = args[1]
         self.itemPath = os.path.join(self.dest_path, self.item_name)
         
+        self.setWindowIcon(QIcon("icons/file-manager-red.svg"))
         self.setWindowTitle("Rename")
         self.setWindowModality(Qt.ApplicationModal)
         self.resize(500,300)
@@ -315,6 +318,7 @@ class MyDialogRename3(QDialog):
     def __init__(self, *args, parent=None):
         super(MyDialogRename3, self).__init__(parent)
         
+        self.setWindowIcon(QIcon("icons/file-manager-red.svg"))
         self.setWindowTitle("Set a new name")
         self.setWindowModality(Qt.ApplicationModal)
         self.resize(500,300)
@@ -366,7 +370,8 @@ class otherApp(QDialog):
     def __init__(self, itemPath, parent=None):
         super(otherApp, self).__init__(parent)
         
-        self.setWindowTitle("")
+        self.setWindowIcon(QIcon("icons/file-manager-red.svg"))
+        self.setWindowTitle("Other application")
         self.setWindowModality(Qt.ApplicationModal)
         self.resize(500,100)
         grid = QGridLayout()
@@ -413,6 +418,7 @@ class propertyDialog(QDialog):
         storageInfo = QStorageInfo(self.itemPath)
         storageInfoIsReadOnly = storageInfo.isReadOnly()
         #
+        self.setWindowIcon(QIcon("icons/file-manager-red.svg"))
         self.setWindowTitle("Property")
         self.setWindowModality(Qt.ApplicationModal)
         self.resize(600, 300)
@@ -1344,7 +1350,7 @@ class MainWin(QWidget):
     def __init__(self, parent=None):
         super(MainWin, self).__init__(parent)
         
-        self.setWindowIcon(QIcon("icons/file-manager-blue"))
+        self.setWindowIcon(QIcon("icons/file-manager-blue.svg"))
         
         if FOLDER_TO_OPEN == "HOME":
             HOME = os.path.expanduser('~')
