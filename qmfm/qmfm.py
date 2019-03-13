@@ -919,7 +919,7 @@ class copyItems():
         self.mydialog.setWindowIcon(QIcon("icons/file-manager-red.svg"))
         self.mydialog.setWindowTitle("Copying...")
         self.mydialog.setWindowModality(Qt.ApplicationModal)
-        self.mydialog.resize(400,300)
+        self.mydialog.resize(600,300)
         # 
         grid = QGridLayout()
         grid.setContentsMargins(5,5,5,5)
