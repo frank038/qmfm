@@ -314,33 +314,37 @@ class MyDialogRename2(QDialog):
 class MyDialogRename3(QDialog):
     def __init__(self, *args, parent=None):
         super(MyDialogRename3, self).__init__(parent)
-        #
+        
         self.setWindowTitle("Set a new name")
         self.setWindowModality(Qt.ApplicationModal)
         self.resize(500,300)
-        grid = QGridLayout()
-        grid.setContentsMargins(5,5,5,5)
+        
+        mbox = QBoxLayout(QBoxLayout.TopToBottom)
+        mbox.setContentsMargins(5,5,5,5)
+        self.setLayout(mbox)
+        
         label1 = QLabel("Choose a new name:")
-        #
-        grid.addWidget(label1, 0, 1, 1, 4, Qt.AlignCenter)
-        #
+        mbox.addWidget(label1)
+        
         self.lineedit = QLineEdit()
         self.lineedit.setText(args[0])
         self.lineedit.setCursorPosition(0)
         args_basename = QFileInfo(args[0]).baseName()
         len_args_basename = len(args_basename)
         self.lineedit.setSelection(0 , len_args_basename)
-        grid.addWidget(self.lineedit, 3, 1, 1, 4, Qt.AlignCenter)
-        #
+        mbox.addWidget(self.lineedit)
+        
+        box = QBoxLayout(QBoxLayout.LeftToRight)
+        mbox.addLayout(box)
+        
         button1 = QPushButton("OK")
-        grid.addWidget(button1, 4, 1, 1, 1, Qt.AlignCenter)
+        box.addWidget(button1)
         button1.clicked.connect(lambda:self.faccept(args[0], args[1]))
-        #
+        
         button3 = QPushButton("Cancel")
-        grid.addWidget(button3, 4, 4, 1, 1, Qt.AlignCenter)
+        box.addWidget(button3)
         button3.clicked.connect(self.fcancel)
-        #
-        self.setLayout(grid)
+        
         self.Value = ""
         self.exec_()
 
