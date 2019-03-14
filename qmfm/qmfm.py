@@ -2593,6 +2593,8 @@ class LView(QBoxLayout):
         
         if os.path.islink(path):
             linked_target = os.readlink(path)
+            if linked_target[0] != "/":
+                linked_target = "/"+linked_target
             if os.path.exists(linked_target):
                 self.label6.setText("link to {}".format(linked_target), self.window.size().width())
             else:
