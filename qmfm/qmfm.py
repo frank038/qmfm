@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# version 0.43.00
+# version 0.44.00
 
 #from PyQt5.QtCore import *
 #from PyQt5.QtWidgets import *
@@ -454,7 +454,7 @@ class propertyDialog(QDialog):
         #
         labelSize = QLabel("Size")
         grid1.addWidget(labelSize, 4, 0, 1, 1, Qt.AlignRight)
-        self.labelSize2 = QLabel()
+        self.labelSize2 = clabel2()
         grid1.addWidget(self.labelSize2, 4, 1, 1, 4, Qt.AlignLeft)
         #
         labelCreation = QLabel("Creation")
@@ -544,7 +544,7 @@ class propertyDialog(QDialog):
         imime = QMimeDatabase().mimeTypeForFile(self.itemPath, QMimeDatabase.MatchDefault)
         self.labelMime2.setText(imime.name())
         #
-        self.labelSize2.setText(str(fileInfo.size())+" bytes")
+        self.labelSize2.setText(str(fileInfo.size())+" bytes", self.size().width()-50)
         #
         mctime = datetime.datetime.fromtimestamp(os.stat(self.itemPath).st_ctime).strftime('%c')
         #
@@ -924,7 +924,8 @@ class copyItems():
         grid = QGridLayout()
         grid.setContentsMargins(5,5,5,5)
         #
-        self.label1 = QLabel("Processing...")
+        self.label1 = clabel2()
+        self.label1.setText("Processing...", self.mydialog.size().width()-12)
         self.label1.setWordWrap(True)
         grid.addWidget(self.label1, 0, 0, 1, 4, Qt.AlignCenter)
         #
@@ -971,8 +972,7 @@ class copyItems():
         return sfsize    
     
     def threadslot(self, aa):
-        self.label1.setText(aa[0])
-        self.label1.setWordWrap(True)
+        self.label1.setText(aa[0], self.mydialog.size().width()-12)
         self.label2.setText("Total size: {}".format(self.convert_size(aa[2])))
         self.pb.setValue(int(aa[1]*100))
         if self.pb.value() == 100:
