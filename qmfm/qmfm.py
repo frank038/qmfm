@@ -162,7 +162,8 @@ class MyDialog(QDialog):
         grid = QGridLayout()
         grid.setContentsMargins(5,5,5,5)
         #
-        label = QLabel(args[1])
+        label = clabel2()
+        label.setText(args[1], self.size().width()-12)
         label.setWordWrap(True)
         #
         button_ok = QPushButton("     Ok     ")
