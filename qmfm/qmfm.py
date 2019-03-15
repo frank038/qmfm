@@ -3166,6 +3166,8 @@ class LView(QBoxLayout):
                 continue
         
         if item_list == "copy\n":
+            clipboard = QApplication.clipboard()
+            clipboard.clear()
             return
         
         clipboard = QApplication.clipboard()
@@ -3194,6 +3196,8 @@ class LView(QBoxLayout):
                 continue
         
         if item_list == "cut\n":
+            clipboard = QApplication.clipboard()
+            clipboard.clear()
             return
         
         clipboard = QApplication.clipboard()
