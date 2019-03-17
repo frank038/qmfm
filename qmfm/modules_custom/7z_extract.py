@@ -24,35 +24,6 @@ def mmodule_type(mainLView):
         return 0
 
 
-class clabel2(QLabel):
-    
-    def __init__(self, parent=None):
-        super(clabel2, self).__init__(parent)
-    
-    def setText(self, text, wWidth):
-        
-        boxWidth = wWidth*QApplication.instance().devicePixelRatio()
-        font = self.font()
-        metric = QFontMetrics(font)
-        string = text
-        ctemp = ""
-        ctempT = ""
-        for cchar in string:
-            ctemp += str(cchar)
-            width = metric.width(ctemp)
-            if width < boxWidth:
-                ctempT += str(cchar)
-                continue
-            else:
-                ctempT += str(cchar)
-                ctempT += "\n"
-                ctemp = str(cchar)
-        
-        ntext = ctempT
-        
-        super(clabel2, self).setText(ntext)
-
-
 class MyDialog(QDialog):
     def __init__(self, *args, parent=None):
         super(MyDialog, self).__init__(parent)
@@ -64,8 +35,7 @@ class MyDialog(QDialog):
         mbox.setContentsMargins(5,5,5,5)
         self.setLayout(mbox)
         #
-        label = clabel2()
-        label.setText(args[1], self.size().width()-12)
+        label = QLabel(args[1])
         label.setWordWrap(True)
         mbox.addWidget(label)
         #
