@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# version 0.50.00
+# version 0.51.00
 
 from PyQt5.QtCore import (QUrl,QFileInfo,QRect,QStorageInfo,QMimeData,QMimeDatabase,QFile,QThread,Qt,pyqtSignal,QSize,QMargins,QDir,QByteArray,QItemSelection,QItemSelectionModel,QPoint)
 from PyQt5.QtWidgets import (qApp,QBoxLayout,QLabel,QPushButton,QDesktopWidget,QApplication,QDialog,QGridLayout,QMessageBox,QLineEdit,QTabWidget,QWidget,QGroupBox,QComboBox,QCheckBox,QProgressBar,QListView,QFileSystemModel,QItemDelegate,QStyle,QFileIconProvider,QAbstractItemView,QFormLayout,QAction,QMenu)
@@ -2830,22 +2830,22 @@ class LView(QBoxLayout):
             if len(list_custom_modules) > 0:
                 listActions = []
                 for el in list_custom_modules:
-                    if el.mmodule_type() == 1 and len(self.selection) == 1:
+                    if el.mmodule_type(self) == 1 and len(self.selection) == 1:
                         icustomAction = QAction(el.mmodule_name(), self)
                         listActions.append(icustomAction)
                         listActions.append(el)
                         listActions.append(1)
-                    elif el.mmodule_type() == 2 and len(self.selection) > 1:
+                    elif el.mmodule_type(self) == 2 and len(self.selection) > 1:
                         icustomAction = QAction(el.mmodule_name(), self)
                         listActions.append(icustomAction)
                         listActions.append(el)
                         listActions.append(2)
-                    elif el.mmodule_type() == 3 and len(self.selection) > 0:
+                    elif el.mmodule_type(self) == 3 and len(self.selection) > 0:
                         icustomAction = QAction(el.mmodule_name(), self)
                         listActions.append(icustomAction)
                         listActions.append(el)
                         listActions.append(3)
-                    elif el.mmodule_type() == 5:
+                    elif el.mmodule_type(self) == 5:
                         icustomAction = QAction(el.mmodule_name(), self)
                         listActions.append(icustomAction)
                         listActions.append(el)
@@ -2915,7 +2915,7 @@ class LView(QBoxLayout):
             if len(list_custom_modules) > 0:
                 listActions = []
                 for el in list_custom_modules:
-                    if el.mmodule_type() == 4 or el.mmodule_type() == 5:
+                    if el.mmodule_type(self) == 4 or el.mmodule_type(self) == 5:
                         bcustomAction = QAction(el.mmodule_name(), self)
                         listActions.append(bcustomAction)
                         listActions.append(el)
