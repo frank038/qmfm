@@ -21,7 +21,8 @@ Thumbnailers for images, videos, using ffmpegthumbnailer, and pdf files
 (using pdftocairo) are provided.
 At the moment, the following script are provided: open xterm in the current directory (if
 xterm is installed); calculate the checksum of the selected items (if the checksums
-are installed); extract the content of the selected archive (if 7z is installed).
+are installed); extract the content of the selected archive, alse with password 
+(if 7z is installed).
 
 The program also support the default templates directory, or a generic Templates
 folder.
