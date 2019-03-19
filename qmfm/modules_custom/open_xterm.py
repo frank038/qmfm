@@ -27,6 +27,6 @@ class ModuleCustom():
             path = mainLView.lvDir
             comm = "cd '{}' && /bin/bash".format(path)
             command = ['xterm', '-fa', 'Monospace', '-fs', '12', '-fg', 'white', '-bg', 'black', '-geometry', '70x18', '-e', comm]
-            subprocess.call(command)
+            subprocess.Popen(command)
         except:
             pass
