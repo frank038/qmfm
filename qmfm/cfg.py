@@ -1,6 +1,6 @@
 ### main program
-# directory to open - full path
-FOLDER_TO_OPEN = "folder"
+# directory to open - full path or HOME
+FOLDER_TO_OPEN = "HOME"
 # thumbnailers: 0 no - 1 yes
 USE_THUMB = 1
 # icon cell width - greater than ICON_SIZE
