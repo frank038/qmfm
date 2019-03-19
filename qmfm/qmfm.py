@@ -106,6 +106,13 @@ except Exception as E:
     fm = firstMessage("Error", "Error while importing the module:\n{}".format(str(E)))
     sys.exit(app.exec_())
 
+if not os.path.exists("modules_custom"):
+    try:
+        os.mkdir("modules_custom")
+    except:
+        print("Cannot create the modules_custom folder. Exiting...")
+        sys.exit()
+
 sys.path.append("modules_custom")
 mmod_custom = glob.glob("modules_custom/*.py")
 list_custom_modules = []
