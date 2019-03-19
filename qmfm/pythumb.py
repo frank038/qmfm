@@ -12,6 +12,15 @@ from PyQt5.QtGui import (QImageReader,QPen,QColor,QPainter,QImageWriter)
 
 from cfg import BORDER_COLOR_R, BORDER_COLOR_G, BORDER_COLOR_B, XDG_CACHE_LARGE
 
+try:
+    if not os.path.exists("sh_thumbnails"):
+        os.mkdir("sh_thumbnails")
+    if not os.path.exists("sh_thumbnails/large"):
+        os.mkdir("sh_thumbnails/large")
+except:
+    print("Cannot create the sh_thumbnails folder or its subfolder. Exiting...")
+    sys.exit()
+
 sys.path.append("modules_thumb")
 mmod_bg = glob.glob("modules_thumb/*.py")
 
