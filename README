@@ -36,6 +36,7 @@ folders will be copied too, and viceversa.
 new tab, and files opened with the default program, if any, with a double click.
 - Progress dialog during copying operations: the current copying operation cannot be
 interrupted, only the following ones can be interrupted.
+- Canc key: selected items to recycle bin.
 
 What is not implemented and maybe never will be implemented:
 - the XDS protocol, due to lack of documentation.
