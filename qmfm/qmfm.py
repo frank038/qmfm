@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # version 0.52.00
 
-from PyQt5.QtCore import (QUrl,QFileInfo,QRect,QStorageInfo,QMimeData,QMimeDatabase,QFile,QThread,Qt,pyqtSignal,QSize,QMargins,QDir,QByteArray,QItemSelection,QItemSelectionModel,QPoint)
+from PyQt5.QtCore import (QEvent,QObject,QUrl,QFileInfo,QRect,QStorageInfo,QMimeData,QMimeDatabase,QFile,QThread,Qt,pyqtSignal,QSize,QMargins,QDir,QByteArray,QItemSelection,QItemSelectionModel,QPoint)
 from PyQt5.QtWidgets import (qApp,QBoxLayout,QLabel,QPushButton,QDesktopWidget,QApplication,QDialog,QGridLayout,QMessageBox,QLineEdit,QTabWidget,QWidget,QGroupBox,QComboBox,QCheckBox,QProgressBar,QListView,QFileSystemModel,QItemDelegate,QStyle,QFileIconProvider,QAbstractItemView,QFormLayout,QAction,QMenu)
 from PyQt5.QtGui import (QDrag,QPixmap,QStaticText,QTextOption,QIcon,QStandardItem,QStandardItemModel,QFontMetrics,QColor,QPalette,QClipboard,QPainter)
 
@@ -2530,8 +2530,32 @@ class LView(QBoxLayout):
  
         self.tabLabels()
         
+        self.clickable2(self.listview).connect(self.itemsToTrash)
+        
         thread = thumbThread(self.lvDir, self.fileModel, self.listview)
         thread.start()
+    
+    def itemsToTrash(self):
+        if self.selection:
+            self.ftrashAction()
+    
+    def clickable2(self, widget):
+
+        class Filter(QObject):
+            
+            clicked = pyqtSignal()
+            
+            def eventFilter(self, obj, event):
+                if obj == widget:
+                    if event.type() == QEvent.KeyRelease:
+                        if event.key() == Qt.Key_Delete:
+                            self.clicked.emit()
+                
+                return False
+        
+        filter = Filter(widget)
+        widget.installEventFilter(filter)
+        return filter.clicked
     
     def tabLabels(self):
         self.label1.setText("Path")
