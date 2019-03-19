@@ -21,6 +21,13 @@ except:
     print("Cannot create the sh_thumbnails folder or its subfolder. Exiting...")
     sys.exit()
 
+if not os.path.exists("modules_thumb"):
+    try:
+        os.mkdir("modules_thumb")
+    except:
+        print("Cannot create the modules_thumb folder. Exiting...")
+        sys.exit()
+
 sys.path.append("modules_thumb")
 mmod_bg = glob.glob("modules_thumb/*.py")
 
