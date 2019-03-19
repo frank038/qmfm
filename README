@@ -1,5 +1,5 @@
-Stage: alpha testing.
-Version 0.51.00
+Stage: beta testing.
+Version 0.52.00
 Required: Pyqt5, PyXdg, xdg-utils, python3-dbus.
 Just launch the file qmfm.py from the project directory.
 
@@ -17,12 +17,12 @@ This means the home recycle bin is indipendent from the recycle bin of the other
 storage masses.
 
 The program support custom scripts and custom thumbnailers.
-Thumbnailers for images, videos, using ffmpegthumbnailer, and pdf files 
+Thumbnailers for images, videos (using ffmpegthumbnailer), and pdf files 
 (using pdftocairo) are provided.
 At the moment, the following script are provided: open xterm in the current directory (if
 xterm is installed); calculate the checksum of the selected items (if the checksums
 are installed); extract the content of the selected archive, alse with password 
-(if 7z is installed).
+(if 7z is installed); create a tar or tar.gz archive (if tar and gzip are installed).
 
 The program also support the default templates directory, or a generic Templates
 folder.
