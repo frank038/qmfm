@@ -125,6 +125,10 @@ for el in reversed(mmod_custom):
         fm = firstMessage("Error", "Error while importing the plugin:\n{}".format(str(ioe)))
         sys.exit(app.exec_())
 
+if not os.path.exists("icons"):
+    print("The folder icons doesn't exist. Exiting...")
+    sys.exit()
+
 MMTAB = object
 TCOMPUTER = 0
 
