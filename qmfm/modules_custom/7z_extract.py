@@ -115,7 +115,7 @@ class ModuleCustom():
                     
                     if ret == 1:
                         try:
-                            subprocess.call(['7z', 'x', "-o{}".format(os.path.dirname(path)), '-y', '-aou', '--', path])
+                            subprocess.Popen(['7z', 'x', "-o{}".format(os.path.dirname(path)), '-y', '-aou', '--', path])
                             
                             MyDialog("Info", "Archive extracted.")
                         except:
@@ -125,7 +125,7 @@ class ModuleCustom():
                         pret = passWord(path).arpass
                         
                         try:
-                            subprocess.call(['7z', 'x', '-p{}'.format(pret), '-o{}'.format(os.path.dirname(path)), '-y', '-aou', '--', path])
+                            subprocess.Popen(['7z', 'x', '-p{}'.format(pret), '-o{}'.format(os.path.dirname(path)), '-y', '-aou', '--', path])
                             MyDialog("Info", "Archive extracted.")
                         except:
                             MyDialog("ERROR", "Issues while extracting the archive.")
