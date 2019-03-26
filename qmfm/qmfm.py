@@ -2543,8 +2543,9 @@ class LView(QBoxLayout):
         
         self.clickable2(self.listview).connect(self.itemsToTrash)
         
-        thread = thumbThread(self.lvDir, self.fileModel, self.listview)
-        thread.start()
+        if USE_THUMB == 1:
+            thread = thumbThread(self.lvDir, self.fileModel, self.listview)
+            thread.start()
     
     def itemsToTrash(self):
         if self.selection:
