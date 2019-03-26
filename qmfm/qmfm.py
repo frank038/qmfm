@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# version 0.52.00
+# version 0.60.00
 
 from PyQt5.QtCore import (QEvent,QObject,QUrl,QFileInfo,QRect,QStorageInfo,QMimeData,QMimeDatabase,QFile,QThread,Qt,pyqtSignal,QSize,QMargins,QDir,QByteArray,QItemSelection,QItemSelectionModel,QPoint)
 from PyQt5.QtWidgets import (qApp,QBoxLayout,QLabel,QPushButton,QDesktopWidget,QApplication,QDialog,QGridLayout,QMessageBox,QLineEdit,QTabWidget,QWidget,QGroupBox,QComboBox,QCheckBox,QProgressBar,QListView,QFileSystemModel,QItemDelegate,QStyle,QFileIconProvider,QAbstractItemView,QFormLayout,QAction,QMenu)
@@ -1105,10 +1105,10 @@ class MyQlist(QListView):
                         nroot, ext = os.path.splitext(os.path.basename(item))
                         if ext == ".html" or ext == ".htm":
                             fname = os.path.join(dir_name, nroot+"_files")
-                            if fname not in filePaths:
-                                # se cartella e leggibile
-                                if stat.S_ISDIR(os.stat(fname).st_mode) and os.access(fname, os.R_OK):
-                                    filePaths.append(fname)
+                            if os.path.exists(fname):
+                                if fname not in filePaths:
+                                    if stat.S_ISDIR(os.stat(fname).st_mode) and os.access(fname, os.R_OK):
+                                        filePaths.append(fname)
                     if stat.S_ISDIR(os.stat(item).st_mode):
                         dir_name = os.path.dirname(item)
                         base_name = os.path.basename(item)
@@ -3158,10 +3158,10 @@ class LView(QBoxLayout):
                         nroot, ext = os.path.splitext(os.path.basename(item))
                         if ext == ".html" or ext == ".htm":
                             fname = os.path.join(dir_name, nroot+"_files")
-                            if fname not in filePaths:
-                                # se cartella e leggibile
-                                if stat.S_ISDIR(os.stat(fname).st_mode) and os.access(fname, os.R_OK):
-                                    filePaths.append(fname)
+                            if os.path.exists(fname):
+                                if fname not in filePaths:
+                                    if stat.S_ISDIR(os.stat(fname).st_mode) and os.access(fname, os.R_OK):
+                                        filePaths.append(fname)
                     if stat.S_ISDIR(os.stat(item).st_mode):
                         dir_name = os.path.dirname(item)
                         base_name = os.path.basename(item)
