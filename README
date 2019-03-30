@@ -1,5 +1,4 @@
-Stage: testing.
-Version 0.60.00
+Version 0.99.00
 Required: Pyqt5, PyXdg, xdg-utils, python3-dbus.
 Just launch the file qmfm.py from the project directory to open the home folder,
 or open a different folder from the command line or by chancing the config file.
@@ -24,6 +23,8 @@ At the moment, the following script are provided: open xterm in the current dire
 xterm is installed); calculate the checksum of the selected items (if the checksums
 are installed); extract the content of the selected archive, alse with password 
 (if 7z is installed); create a tar or tar.gz archive (if tar and gzip are installed).
+
+Drag and Drop is supported.
 
 The program also support the default templates directory, or a generic Templates
 folder.
