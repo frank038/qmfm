@@ -1,4 +1,4 @@
-Version 0.99.01
+Version 0.99.02
 Required: Pyqt5, PyXdg, xdg-utils, python3-dbus.
 Just launch the file qmfm.py from the project directory to open the home folder,
 or open a different folder from the command line or by chancing the config file.
