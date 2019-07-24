@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# version 0.99.01
+# version 0.99.02
 
 from PyQt5.QtCore import (QEvent,QObject,QUrl,QFileInfo,QRect,QStorageInfo,QMimeData,QMimeDatabase,QFile,QThread,Qt,pyqtSignal,QSize,QMargins,QDir,QByteArray,QItemSelection,QItemSelectionModel,QPoint)
 from PyQt5.QtWidgets import (qApp,QBoxLayout,QLabel,QPushButton,QDesktopWidget,QApplication,QDialog,QGridLayout,QMessageBox,QLineEdit,QTabWidget,QWidget,QGroupBox,QComboBox,QCheckBox,QProgressBar,QListView,QFileSystemModel,QItemDelegate,QStyle,QFileIconProvider,QAbstractItemView,QFormLayout,QAction,QMenu)
@@ -2783,6 +2783,8 @@ class LView(QBoxLayout):
                 
     def lselectionChanged(self):
         self.selection = self.listview.selectionModel().selectedIndexes()
+        if len(self.selection) == 1:
+            return
         if self.selection == []:
             self.tabLabels()
         else:
