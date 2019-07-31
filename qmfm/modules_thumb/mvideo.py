@@ -18,7 +18,7 @@ def picture_to_img(fpath):
         return "Null"
     
     if not img.isNull():
-        img_scaled = img.scaled(256, 256, Qt.KeepAspectRatio, Qt.FastTransformation)
+        img_scaled = img #.scaled(256, 256, Qt.KeepAspectRatio, Qt.FastTransformation)
         return img_scaled
     else:
         return "Null"
