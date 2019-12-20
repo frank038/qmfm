@@ -1,7 +1,9 @@
-Version 0.99.02
+Version 20191220 alpha 0
+(AT THE MOMENT DO NOT USE THIS PROGRAM BECAUSE A REWORK)
+
 Required: Pyqt5, PyXdg, xdg-utils, python3-dbus.
 Just launch the file qmfm.py from the project directory to open the home folder,
-or open a different folder from the command line or by chancing the config file.
+or open a different folder from the command line or by changing the config file.
 
 ------------
 
@@ -16,11 +18,11 @@ The disks tab let user manage the recycle bin of every partition, if supported.
 This means the home recycle bin is indipendent from the recycle bin of the other
 storage masses.
 
-The program support custom scripts and custom thumbnailers.
+This program supports custom scripts and custom thumbnailers.
 Thumbnailers for images, videos (using ffmpegthumbnailer), and pdf files 
 (using pdftocairo) are provided.
 At the moment, the following script are provided: open xterm in the current directory (if
-xterm is installed); calculate the checksum of the selected items (if the checksums
+xterm is installed); calculate the checksum of the selected item (if the checksum programs
 are installed); extract the content of the selected archive, alse with password 
 (if 7z is installed); create a tar or tar.gz archive (if tar and gzip are installed).
 
@@ -34,7 +36,7 @@ At the moment the hidden features are:
 - The program accept a folder or file path as argument.
 - When html/htm files are copied or dropped into this program the associated 
 folders will be copied too, and viceversa.
-- Recycle bin tabs: the files have a contextual menu; folders can be opened in a
+- Recycle bin tabs: the items have a contextual menu; folders can be opened in a
 new tab, and files opened with the default program, if any, with a double click.
 - Progress dialog during copying operations: the current copying operation cannot be
 interrupted, only the following ones can be interrupted.
