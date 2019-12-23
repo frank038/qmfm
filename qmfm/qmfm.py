@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# version alpha 1
+# version alpha 2
 
 from PyQt5.QtCore import (QEvent,QObject,QUrl,QFileInfo,QRect,QStorageInfo,QMimeData,QMimeDatabase,QFile,QThread,Qt,pyqtSignal,QSize,QMargins,QDir,QByteArray,QItemSelection,QItemSelectionModel,QPoint)
 from PyQt5.QtWidgets import (qApp,QBoxLayout,QLabel,QPushButton,QDesktopWidget,QApplication,QDialog,QGridLayout,QMessageBox,QLineEdit,QTabWidget,QWidget,QGroupBox,QComboBox,QCheckBox,QProgressBar,QListView,QFileSystemModel,QItemDelegate,QStyle,QFileIconProvider,QAbstractItemView,QFormLayout,QAction,QMenu)
@@ -19,9 +19,8 @@ import pwd
 import threading
 from xdg.BaseDirectory import *
 from xdg.DesktopEntry import *
-from cfg import FOLDER_TO_OPEN,USE_THUMB,ITEM_WIDTH,ITEM_HEIGHT,ICON_SIZE,ICON_SIZE2,ITEM_SPACE,FONT_SIZE,USE_TRASH,USE_MEDIA,USE_BACKGROUND_COLOUR,ORED,OGREEN,OBLUE,ICON_THEME,XDG_CACHE_LARGE
+from cfg import FOLDER_TO_OPEN,USE_THUMB,ITEM_WIDTH,ITEM_HEIGHT,ICON_SIZE,ICON_SIZE2,ITEM_SPACE,FONT_SIZE,USE_DELETE,USE_TRASH,USE_MEDIA,USE_BACKGROUND_COLOUR,ORED,OGREEN,OBLUE,ICON_THEME,XDG_CACHE_LARGE
 
-## set the font used in the application
 thefont = QFont()
 thefont.setPointSize(FONT_SIZE)
 
@@ -185,7 +184,7 @@ class MyDialog(QDialog):
         self.setLayout(grid)
         button_ok.clicked.connect(self.close)
         self.exec_()
-    
+
 class MyMessageBox(QMessageBox):
     def __init__(self, *args, parent=None):
         super(MyMessageBox, self).__init__(parent)
@@ -199,7 +198,6 @@ class MyMessageBox(QMessageBox):
         self.setFont(thefont)
         
         retval = self.exec_()
-
 
 class MyDialogRename(QDialog):
     def __init__(self, *args, parent=None):
@@ -787,7 +785,6 @@ class propertyDialog(QDialog):
     def faccept(self):
         self.close()
     
-
 class execfileDialog(QDialog):
     def __init__(self, itemPath, flag, parent=None):
         super(execfileDialog, self).__init__(parent)
@@ -838,6 +835,30 @@ class execfileDialog(QDialog):
         self.Value = -1
         self.close()
 
+class retDialogBox(QMessageBox):
+    def __init__(self, *args, parent=None):
+        super(retDialogBox, self).__init__(parent)
+        self.setIcon(QMessageBox.Information)
+        self.setWindowIcon(QIcon("icons/file-manager-red.svg"))
+        self.setWindowTitle(args[0])
+        self.setText(args[1])
+        self.setInformativeText(args[2])
+        self.setDetailedText("The details are as follows:\n\n"+args[3])
+        self.setStandardButtons(QMessageBox.Yes | QMessageBox.Cancel)
+        self.setFont(thefont)
+        
+        self.Value = None
+        retval = self.exec_()
+        
+        if retval == QMessageBox.Yes:
+            self.Value = 1
+        elif retval == QMessageBox.Cancel:
+            self.Value = 0
+    
+    def getValue(self):
+        return self.Value
+
+
 class copyThread(QThread):
     
     sig = pyqtSignal(list)
@@ -870,24 +891,40 @@ class copyThread(QThread):
         total_size = 0
         incr_size = 0
         for sitem in newList[::2]:
-            if os.path.isfile(sitem):
+            if os.path.islink(sitem):
+                total_size += 512
+            elif os.path.isfile(sitem):
                 item_size = QFileInfo(sitem).size()
-                total_size += item_size or 512
+                total_size += max(item_size, 512)
             elif os.path.isdir(sitem):
                 item_size = self.folder_size(sitem)
-                total_size += item_size or 512
+                total_size += max(item_size, 512)
 
         self.sig.emit(["Starting...", 0, total_size])
+        # copy
         if action == 1:
             i = 0
             for dfile in newList[::2]:
                 if not self.isInterruptionRequested():
                     time.sleep(0.1)
-                    if os.path.isdir(dfile):
+                    if os.path.islink(dfile):
+                        try:
+                            self.sig.emit([os.path.basename(dfile), incr_size/total_size, total_size])
+                            # create a link to the file, do not copy the symlink
+                            ltarget = QFile.symLinkTarget(dfile)
+                            os.symlink(ltarget, newList[i+1])
+                            #
+                            incr_size += 512
+                            self.sig.emit([os.path.basename(dfile), incr_size/total_size, total_size])
+                            #
+                        except Exception as E:
+                            items_skipped += "{}:\n{}\n------------\n".format(os.path.basename(dfile), str(E))
+                    
+                    elif os.path.isdir(dfile):
                         try:
                             self.sig.emit([os.path.basename(dfile), incr_size/total_size, total_size])
                             shutil.copytree(dfile, newList[i+1], symlinks=True, ignore=None)
-                            incr_size += self.folder_size(dfile) or 512
+                            incr_size += max(self.folder_size(dfile), 512)
                             self.sig.emit([os.path.basename(dfile), incr_size/total_size, total_size])
                         except Exception as E:
                             items_skipped += "{}:\n{}\n------------\n".format(os.path.basename(dfile), str(E))
@@ -897,7 +934,7 @@ class copyThread(QThread):
                             self.sig.emit([os.path.basename(dfile), incr_size/total_size, total_size])
                             shutil.copy2(dfile, newList[i+1])
                             #
-                            incr_size += QFileInfo(dfile).size() or 512
+                            incr_size += max(QFileInfo(dfile).size(), 512)
                             self.sig.emit([os.path.basename(dfile), incr_size/total_size, total_size])
                             #
                         except Exception as E:
@@ -907,22 +944,29 @@ class copyThread(QThread):
                     self.sig.emit(["Cancelled!", 1, total_size, items_skipped])
                     return
             self.sig.emit(["Done", 1, total_size, items_skipped])
-                    
+        # cut
         elif action == 2:
             i = 0
             for dfile in newList[::2]:
                 if not self.isInterruptionRequested():
                     time.sleep(0.1)
-
                     try:
                         self.sig.emit([os.path.basename(dfile), incr_size/total_size, total_size])
                         #
-                        if os.path.isfile(dfile):
-                            incr_size += QFileInfo(dfile).size() or 512
+                        if os.path.islink(dfile):
+                            incr_size += 512
+                            # create a link to the file, do not copy the symlink
+                            ltarget = QFile.symLinkTarget(dfile)
+                            os.symlink(ltarget, newList[i+1])
+                            # delete the original link
+                            os.unlink(dfile)
+                        elif os.path.isfile(dfile):
+                            incr_size += max(QFileInfo(dfile).size(), 512)
+                            shutil.move(dfile, newList[i+1])
                         elif os.path.isdir(dfile):
-                            incr_size += self.folder_size(dfile) or 512
-
-                        shutil.move(dfile, newList[i+1])
+                            incr_size += max(self.folder_size(dfile), 512)
+                            shutil.move(dfile, newList[i+1])
+                        
                         self.sig.emit([os.path.basename(dfile), incr_size/total_size, total_size])
 
                     except Exception as E:
@@ -932,7 +976,7 @@ class copyThread(QThread):
                     self.sig.emit(["Cancelled!", 1, total_size, items_skipped])
                     return
             self.sig.emit(["Done", 1, total_size, items_skipped])
-        #
+        # link
         elif action == 4:
             i = 0
             for dfile in newList[::2]:
@@ -944,9 +988,9 @@ class copyThread(QThread):
                             try:
                                 self.sig.emit([os.path.basename(dfile), incr_size/total_size, total_size])
                                 if os.path.isfile(dfile):
-                                    incr_size += QFileInfo(dfile).size() or 512
+                                    incr_size += max(QFileInfo(dfile).size(), 512)
                                 elif os.path.isdir(dfile):
-                                    incr_size += self.folder_size(dfile) or 512
+                                    incr_size += max(self.folder_size(dfile), 512)
 
                                 os.symlink(ltarget, newList[i+1])
                                 self.sig.emit([os.path.basename(dfile), incr_size/total_size, total_size])
@@ -956,9 +1000,9 @@ class copyThread(QThread):
                         try:
                             self.sig.emit([os.path.basename(dfile), incr_size/total_size, total_size])
                             if os.path.isfile(dfile):
-                                incr_size += QFileInfo(dfile).size() or 512
+                                incr_size += max(QFileInfo(dfile).size(), 512)
                             elif os.path.isdir(dfile):
-                                incr_size += self.folder_size(dfile) or 512
+                                incr_size += max(self.folder_size(dfile), 512)
 
                             os.symlink(dfile, newList[i+1])
                             self.sig.emit([os.path.basename(dfile), incr_size/total_size, total_size])
@@ -1021,7 +1065,6 @@ class copyItems():
         self.mydialog.exec()
 
     def convert_size(self, fsize2):
-        
         if fsize2 == 0 or fsize2 == 1:
             sfsize = str(fsize2)+" byte"
         elif fsize2//1024 == 0:
@@ -1232,7 +1275,7 @@ class MyQlist(QListView):
             else:
                 items_skipped += "{}\n-----------\n".format(os.path.basename(ditem))
         if items_skipped != "":
-            MyMessageBox("Info", "Items skipped because not readable", "", items_skipped)
+            MyMessageBox("Info", "Items skipped because not readable 1", "", items_skipped)
         return nlist
 
     def wrename(self, ditem, dest_path):
@@ -1316,9 +1359,8 @@ class itemDelegate(QItemDelegate):
         hh = st.size().height()
         return QSize(int(ww), int(hh)+ITEM_HEIGHT)
 
-
 class IconProvider(QFileIconProvider):
-    
+    # set the icon theme
     QIcon.setThemeName(ICON_THEME)
     
     def evaluate_pixbuf(self, ifull_path, imime):
@@ -1397,7 +1439,6 @@ class IconProvider(QFileIconProvider):
                                 return QIcon("icons/folder.svg")
                         else:
                             try:
-                                #return QIcon.fromTheme("folder")
                                 return QIcon.fromTheme("inode-directory",QIcon("icons/folder.svg"))
                             except:
                                 return QIcon("icons/folder.svg")
@@ -1791,7 +1832,7 @@ class openTrash(QBoxLayout):
                 MyDialog("Info", path+"\n\n   Not readable")
         elif os.path.isfile(path):
             perms = QFileInfo(path).permissions()
-            # se è eseguibile
+            
             if perms & QFile.ExeOwner:
                 imime = QMimeDatabase().mimeTypeForFile(path, QMimeDatabase.MatchDefault).name()
                 if imime == "application/x-sharedlib":
@@ -2334,7 +2375,7 @@ class openDisks(QBoxLayout):
             list_ddrive = media_module.driveList().drlist()
             if can_eject == 1:
                 
-                ddev = index.data(Qt.UserRole).split("/")[-1]#[:-1]
+                ddev = index.data(Qt.UserRole).split("/")[-1]
                 list_ddev = media_module.diskList().dlist()
                 ddev_block = os.path.join('/org/freedesktop/UDisks2/block_devices', ddev[:-1])
                 ddev_block1 = os.path.join('/org/freedesktop/UDisks2/block_devices', ddev)
@@ -2435,6 +2476,8 @@ class clabel(QLabel):
         super(clabel, self).setText(ntext)
 
 class IconProvider2(QFileIconProvider):
+    # set the icon theme
+    QIcon.setThemeName(ICON_THEME)
     
     def icon(self, fileInfo):
         
@@ -2490,7 +2533,7 @@ class IconProvider2(QFileIconProvider):
                                 return QIcon("icons/folder.svg")
                         else:
                             try:
-                                return QIcon.fromTheme("inode-directory")
+                                return QIcon.fromTheme("inode-directory",QIcon("icons/folder.svg"))
                             except:
                                 return QIcon("icons/folder.svg")
         
@@ -2537,6 +2580,7 @@ class thumbThread(threading.Thread):
         self.listview.viewport().update()
 
 class LView(QBoxLayout):
+    
     def __init__(self, LVDIR, window, flag, parent=None):
         super(LView, self).__init__(QBoxLayout.TopToBottom, parent)
         self.window = window
@@ -2600,12 +2644,15 @@ class LView(QBoxLayout):
         
         self.tabLabels()
         
-        self.clickable2(self.listview).connect(self.itemsToTrash)
+        if USE_TRASH:
+            self.clickable2(self.listview).connect(self.itemsToTrash)
+        elif USE_DELETE:
+            self.clickable2(self.listview).connect(self.fdeleteAction)
         
         if USE_THUMB == 1:
             thread = thumbThread(self.lvDir, self.fileModel, self.listview)
             thread.start()
-    
+        
     def itemsToTrash(self):
         if self.selection:
             self.ftrashAction()
@@ -2756,6 +2803,7 @@ class LView(QBoxLayout):
                     return
 
             defApp = self.defaultApplication(path)
+            
             if defApp != "None":
                 try:
                     subprocess.Popen([defApp, path])
@@ -2773,7 +2821,7 @@ class LView(QBoxLayout):
                 mimetype = "text/plain"
             else:
                 mimetype = imime
-            
+            #
             try:
                 associatedDesktopProgram = subprocess.check_output([ret, "query", "default", mimetype], universal_newlines=False).decode()
             except Exception as E:
@@ -2810,7 +2858,6 @@ class LView(QBoxLayout):
                 
     def lselectionChanged(self):
         self.selection = self.listview.selectionModel().selectedIndexes()
-        
         if len(self.selection) == 1:
             return
         if self.selection == []:
@@ -2934,6 +2981,12 @@ class LView(QBoxLayout):
                         trashAction.triggered.connect(self.ftrashAction)
                         menu.addAction(trashAction)
             
+            if USE_DELETE:
+                if self.flag != 2:
+                    deleteAction = QAction("Delete", self)
+                    deleteAction.triggered.connect(self.fdeleteAction)
+                    menu.addAction(deleteAction)
+            
             if self.flag != 2:
                 if len(self.selection) == 1:
                     menu.addSeparator()
@@ -2941,6 +2994,7 @@ class LView(QBoxLayout):
                     ipath = self.fileModel.fileInfo(self.selection[0]).absoluteFilePath()
                     renameAction.triggered.connect(lambda:self.frenameAction(ipath))
                     menu.addAction(renameAction)
+            
             menu.addSeparator()
             subm_customAction = menu.addMenu("Custom Actions")
             subm_customAction.setFont(thefont)
@@ -2984,6 +3038,7 @@ class LView(QBoxLayout):
                     menu.addAction(propertyAction)
             #
             menu.exec_(self.listview.mapToGlobal(position))
+        
         else:
             self.listview.clearSelection()
             menu = QMenu("Menu", self.listview)
@@ -3093,17 +3148,61 @@ class LView(QBoxLayout):
             self.window.openDir(ldir, flag)
         else:
             MyDialog("Error", "Cannot open the folder: "+os.path.basename(ldir))
+
     
     def ftrashAction(self):
         list_items = []
         for item in self.selection:
             list_items.append(self.fileModel.fileInfo(item).absoluteFilePath())
-
-        TrashModule(list_items)
+        
+        dialogList = ""
+        for item in list_items:
+            dialogList += os.path.basename(item)+"\n"
+        ret = retDialogBox("Info", "Do you really want to move this item(s) to the trash?", "", dialogList)
+        #
+        if ret.getValue():
+            TrashModule(list_items)
+        
+    # bypass the trashcan
+    def fdeleteAction(self):
+        if self.selection:
+            list_items = []
+            for item in self.selection:
+                list_items.append(self.fileModel.fileInfo(item).absoluteFilePath())
+            
+            dialogList = ""
+            for item in list_items:
+                dialogList += os.path.basename(item)+"\n"
+            ret = retDialogBox("Info", "Do you really want to delete this item(s)?", "", dialogList)
+            #
+            if ret.getValue():
+                self.fdeleteItems(list_items)
     
-    # paste and merge
-    def fpasteNmergeAction(self):
-        pass
+    def fdeleteItems(self, listItems):
+        #
+        items_skipped = ""
+        
+        for item in listItems:
+            if os.path.islink(item):
+                try:
+                    os.remove(item)
+                except Exception as E:
+                    items_skipped += os.path.basename(item)+"\n"+str(E)+"\n\n"
+            elif os.path.isfile(item):
+                try:
+                    os.remove(item)
+                except Exception as E:
+                    items_skipped += os.path.basename(item)+"\n"+str(E)+"\n\n"
+            elif os.path.isdir(item):
+                try:
+                    shutil.rmtree(item)
+                except Exception as E:
+                    items_skipped += os.path.basename(item)+"\n"+str(E)+"\n\n"
+            else:
+                items_skipped += os.path.basename(item)+"\n"+"Only files and folders can be deleted."+"\n\n"
+        #
+        if items_skipped != "":
+            MyMessageBox("Info", "Items not deleted:", "", items_skipped)
     
     def fnewFolderAction(self):
         if os.access(self.lvDir, os.W_OK): 
@@ -3206,7 +3305,8 @@ class LView(QBoxLayout):
         nlist = []
         items_skipped = ""
         for ditem in filePaths:
-            if QFileInfo(ditem).isReadable():
+            # readable item or broken symlink
+            if QFileInfo(ditem).isReadable() or os.path.islink(ditem):
                 file_name = os.path.basename(ditem)
                 dest_filePath = os.path.join(dest_path, file_name)
                 if not os.path.exists(dest_filePath):
@@ -3247,12 +3347,17 @@ class LView(QBoxLayout):
                 elif got_action == "cut":
                     action = 2
                 filePaths = [unquote(x)[7:] for x in got_quoted_data[1:]]
-                #for item in filePaths:
-                    #dir_name = os.path.dirname(item)
-                    #if dir_name in self.lvDir:
-                        #MyMessageBox("Info", "A folder cannot copied into itself.\nRetry.","",item)
-                        #return
+                # a folder cannot be copied into itself or into a its subfolder
                 for item in filePaths:
+                    if os.path.isdir(item):
+                        if item in self.lvDir:
+                            MyMessageBox("Info", "A folder cannot copied into itself.\nRetry.","",item)
+                            return
+                # html file needs its folder
+                for item in filePaths:
+                    # if link pass
+                    if os.path.islink(item):
+                        continue
                     if stat.S_ISREG(os.stat(item).st_mode):
                         dir_name = os.path.dirname(item)
                         nroot, ext = os.path.splitext(os.path.basename(item))
@@ -3286,7 +3391,7 @@ class LView(QBoxLayout):
         for iindex in self.selection:
             iname = iindex.data(QFileSystemModel.FileNameRole)
             iname_fp = os.path.join(self.lvDir, iname)
-            
+
             if stat.S_ISREG(os.stat(iname_fp).st_mode) or stat.S_ISDIR(os.stat(iname_fp).st_mode) or stat.S_ISLNK(os.stat(iname_fp).st_mode):
                 iname_quoted = quote(iname, safe='/:?=&')
                 if iindex != self.selection[-1]:
@@ -3317,7 +3422,8 @@ class LView(QBoxLayout):
         for iindex in self.selection:
             iname = iindex.data(QFileSystemModel.FileNameRole)
             iname_fp = os.path.join(self.lvDir, iname)
-            if stat.S_ISREG(os.stat(iname_fp).st_mode) or stat.S_ISDIR(os.stat(iname_fp).st_mode) or stat.S_ISLNK(os.stat(iname_fp).st_mode):
+
+            if os.path.islink(iname_fp) or stat.S_ISREG(os.stat(iname_fp).st_mode) or stat.S_ISDIR(os.stat(iname_fp).st_mode):
                 iname_quoted = quote(iname, safe='/:?=&')
                 if iindex != self.selection[-1]:
                     iname_final = "file://{}\n".format(os.path.join(self.lvDir, iname_quoted))
@@ -3498,5 +3604,6 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     window = MainWin()
     window.setFont(thefont)
+    
     window.show()
     sys.exit(app.exec_())
