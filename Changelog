@@ -1,0 +1,5 @@
+* 20191223 alpha 2
+- more on copying/cutting, expecially on links
+- a folder cannot be copied into itself or into its subfolders
+- implemented an optional delete function that bypass the trashcan
+- deleting and trashing required a confirmation from the user; the dialog also shows the items to be deleted or trashed 
