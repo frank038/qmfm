@@ -15,6 +15,8 @@ ICON_SIZE2 = 48
 ITEM_SPACE = 25
 # font size to use
 FONT_SIZE = 12
+# show delete context menu entry that bypass the trashcan: 0 no - 1 yes
+USE_DELETE = 1
 # load the trash module: 0 no - 1 yes
 USE_TRASH = 0
 # load the media module: 0 no - 1 yes
@@ -25,11 +27,11 @@ USE_BACKGROUND_COLOUR = 1
 ORED = 235
 OGREEN = 235
 OBLUE = 235
-# icon theme name - the qt5ct overrides this, or use QT_QPA_PLATFORMTHEME=Breeze
+# icon theme name - the qt5ct program overrides this
 ICON_THEME = "breeze"
 
 ### needed by pythumb
-# border color of thumbnail
+# border color of the thumbnails
 BORDER_COLOR_R = 0
 BORDER_COLOR_G = 0
 BORDER_COLOR_B = 0
