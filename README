@@ -1,4 +1,4 @@
-Version 20191220 alpha 1
+Version 20191223 alpha 2
 
 The zip package is just for the checksums and contains all the project files.
 
@@ -12,7 +12,6 @@ or open a different folder from the command line or by chancing the config file.
 ------------
 
 The optional disks and trash modules do not track any changes while their tabs are open.
-I do not have much time for such things.
 
 The disks tab let user manage the recycle bin of every partition, if supported.
 This means the home recycle bin is indipendent from the recycle bin of the other
