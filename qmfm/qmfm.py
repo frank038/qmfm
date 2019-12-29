@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# version alpha 2
+# version alpha 3
 
 from PyQt5.QtCore import (QEvent,QObject,QUrl,QFileInfo,QRect,QStorageInfo,QMimeData,QMimeDatabase,QFile,QThread,Qt,pyqtSignal,QSize,QMargins,QDir,QByteArray,QItemSelection,QItemSelectionModel,QPoint)
 from PyQt5.QtWidgets import (qApp,QBoxLayout,QLabel,QPushButton,QDesktopWidget,QApplication,QDialog,QGridLayout,QMessageBox,QLineEdit,QTabWidget,QWidget,QGroupBox,QComboBox,QCheckBox,QProgressBar,QListView,QFileSystemModel,QItemDelegate,QStyle,QFileIconProvider,QAbstractItemView,QFormLayout,QAction,QMenu)
@@ -19,10 +19,17 @@ import pwd
 import threading
 from xdg.BaseDirectory import *
 from xdg.DesktopEntry import *
-from cfg import FOLDER_TO_OPEN,USE_THUMB,ITEM_WIDTH,ITEM_HEIGHT,ICON_SIZE,ICON_SIZE2,ITEM_SPACE,FONT_SIZE,USE_DELETE,USE_TRASH,USE_MEDIA,USE_BACKGROUND_COLOUR,ORED,OGREEN,OBLUE,ICON_THEME,XDG_CACHE_LARGE
+from cfg import FOLDER_TO_OPEN,USE_THUMB,ITEM_WIDTH,ITEM_HEIGHT,ICON_SIZE,ICON_SIZE2,ITEM_SPACE,FONT_SIZE,USE_DELETE,USE_TRASH,USE_MEDIA,USE_DATE,USE_BACKGROUND_COLOUR,ORED,OGREEN,OBLUE,ICON_THEME,XDG_CACHE_LARGE
 
+## set the font used in the application
 thefont = QFont()
 thefont.setPointSize(FONT_SIZE)
+
+# max number of items - 1 to show in the message dialog
+ITEMSDELETED = 30
+
+# with of the dialog windows
+dialWidth = 600
 
 class firstMessage(QWidget):
     
@@ -168,7 +175,7 @@ class MyDialog(QDialog):
         self.setWindowIcon(QIcon("icons/file-manager-red.svg"))
         self.setWindowTitle(args[0])
         self.setWindowModality(Qt.ApplicationModal)
-        self.resize(400,300)
+        self.resize(dialWidth,300)
         self.setFont(thefont)
         
         grid = QGridLayout()
@@ -184,6 +191,7 @@ class MyDialog(QDialog):
         self.setLayout(grid)
         button_ok.clicked.connect(self.close)
         self.exec_()
+
 
 class MyMessageBox(QMessageBox):
     def __init__(self, *args, parent=None):
@@ -206,7 +214,7 @@ class MyDialogRename(QDialog):
         self.setWindowIcon(QIcon("icons/file-manager-red.svg"))
         self.setWindowTitle("Rename")
         self.setWindowModality(Qt.ApplicationModal)
-        self.resize(500,300)
+        self.resize(dialWidth,300)
         self.setFont(thefont)
         
         mbox = QBoxLayout(QBoxLayout.TopToBottom)
@@ -272,12 +280,11 @@ class MyDialogRename2(QDialog):
         self.item_name = args[0]
         self.dest_path = args[1]
         self.itemPath = os.path.join(self.dest_path, self.item_name)
-        self.setFont(thefont)
         
         self.setWindowIcon(QIcon("icons/file-manager-red.svg"))
         self.setWindowTitle("Rename")
         self.setWindowModality(Qt.ApplicationModal)
-        self.resize(500,300)
+        self.resize(dialWidth,300)
         
         mbox = QBoxLayout(QBoxLayout.TopToBottom)
         mbox.setContentsMargins(5,5,5,5)
@@ -330,6 +337,71 @@ class MyDialogRename2(QDialog):
         self.Value = -1
         self.close()
 
+class MyDialogRename22(QDialog):
+    def __init__(self, *args, parent=None):
+        super(MyDialogRename22, self).__init__(parent)
+        self.item_name = args[0]
+        self.dest_path = args[1]
+        self.itemPath = os.path.join(self.dest_path, self.item_name)
+        self.setFont(thefont)
+        
+        self.setWindowIcon(QIcon("icons/file-manager-red.svg"))
+        self.setWindowTitle("Rename")
+        self.setWindowModality(Qt.ApplicationModal)
+        self.resize(dialWidth,300)
+        
+        mbox = QBoxLayout(QBoxLayout.TopToBottom)
+        mbox.setContentsMargins(5,5,5,5)
+        self.setLayout(mbox)
+        
+        label1 = QLabel("Old name:")
+        mbox.addWidget(label1)
+        
+        label2 = clabel2()
+        label2.setText(self.item_name, self.size().width()-12)
+        mbox.addWidget(label2)
+        
+        label3 = QLabel("New name:")
+        mbox.addWidget(label3)
+        
+        self.lineedit = QLineEdit()
+        self.lineedit.setText(self.item_name)
+        self.lineedit.setCursorPosition(0)
+        args_basename = QFileInfo(self.item_name).baseName()
+        len_args_basename = len(args_basename)
+        self.lineedit.setSelection(0 , len_args_basename)
+        mbox.addWidget(self.lineedit)
+        
+        box = QBoxLayout(QBoxLayout.LeftToRight)
+        mbox.addLayout(box)
+        
+        button1 = QPushButton("OK")
+        box.addWidget(button1)
+        button1.clicked.connect(lambda:self.faccept(self.item_name))
+        
+        button3 = QPushButton("Cancel")
+        box.addWidget(button3)
+        button3.clicked.connect(self.fcancel)
+        
+        self.Value = ""
+        self.exec_()
+    
+    def getValues(self):
+        return self.Value
+    
+    def faccept(self, item_name):
+        newName = self.lineedit.text()
+        if newName != "":
+            if os.path.exists(os.path.join(self.dest_path, newName)) or os.path.islink(os.path.join(self.dest_path, newName)):
+                return
+            else:
+                self.Value = self.lineedit.text()
+                self.close()
+    
+    def fcancel(self):
+        self.Value = -1
+        self.close()
+
 class MyDialogRename3(QDialog):
     def __init__(self, *args, parent=None):
         super(MyDialogRename3, self).__init__(parent)
@@ -337,7 +409,7 @@ class MyDialogRename3(QDialog):
         self.setWindowIcon(QIcon("icons/file-manager-red.svg"))
         self.setWindowTitle("Set a new name")
         self.setWindowModality(Qt.ApplicationModal)
-        self.resize(500,300)
+        self.resize(dialWidth,300)
         self.setFont(thefont)
         
         mbox = QBoxLayout(QBoxLayout.TopToBottom)
@@ -382,6 +454,7 @@ class MyDialogRename3(QDialog):
         self.Value = -1
         self.close()
 
+
 class otherApp(QDialog):
 
     def __init__(self, itemPath, parent=None):
@@ -390,7 +463,7 @@ class otherApp(QDialog):
         self.setWindowIcon(QIcon("icons/file-manager-red.svg"))
         self.setWindowTitle("Other application")
         self.setWindowModality(Qt.ApplicationModal)
-        self.resize(500,100)
+        self.resize(dialWidth,100)
         self.setFont(thefont)
         
         grid = QGridLayout()
@@ -785,6 +858,7 @@ class propertyDialog(QDialog):
     def faccept(self):
         self.close()
     
+
 class execfileDialog(QDialog):
     def __init__(self, itemPath, flag, parent=None):
         super(execfileDialog, self).__init__(parent)
@@ -835,6 +909,7 @@ class execfileDialog(QDialog):
         self.Value = -1
         self.close()
 
+
 class retDialogBox(QMessageBox):
     def __init__(self, *args, parent=None):
         super(retDialogBox, self).__init__(parent)
@@ -859,6 +934,65 @@ class retDialogBox(QMessageBox):
         return self.Value
 
 
+class pasteNmergeDialog(QDialog):
+    
+    def __init__(self, itemsPath, overwrite, parent=None):
+        super(pasteNmergeDialog, self).__init__(parent)
+        self.itemsPath = itemsPath
+        # number of items already present at destination
+        self.overwrite = overwrite
+        #
+        self.setWindowIcon(QIcon("icons/file-manager-red.svg"))
+        self.setWindowTitle("Paste and Merge")
+        self.setWindowModality(Qt.ApplicationModal)
+        self.resize(dialWidth, 100)
+        self.setFont(thefont)
+        #
+        vbox = QBoxLayout(QBoxLayout.TopToBottom)
+        vbox.setContentsMargins(5,5,5,5)
+        self.setLayout(vbox)
+        #
+        label1 = QLabel("This action will overwrite some items with themselves.\nPlease choose an action.\n\nItems with the same name: {}".format(self.overwrite))
+        vbox.addWidget(label1)
+        #
+        hbox = QBoxLayout(QBoxLayout.LeftToRight)
+        vbox.addLayout(hbox)
+        # skip all the items
+        skipButton = QPushButton("Skip")
+        hbox.addWidget(skipButton)
+        skipButton.clicked.connect(lambda:self.fsetValue(1))
+        # overwrite all the items
+        overwriteButton = QPushButton("Merge/Overwrite")
+        hbox.addWidget(overwriteButton)
+        overwriteButton.clicked.connect(lambda:self.fsetValue(2))
+        # a new name for all the items
+        newnameButton = QPushButton("New name")
+        hbox.addWidget(newnameButton)
+        newnameButton.clicked.connect(lambda:self.fsetValue(3))
+        # add an preformatted extension to the items
+        automaticButton = QPushButton("Automatic")
+        hbox.addWidget(automaticButton)
+        automaticButton.clicked.connect(lambda:self.fsetValue(4))
+        # abort the operation
+        cancelButton = QPushButton("Cancel")
+        hbox.addWidget(cancelButton)
+        cancelButton.clicked.connect(self.fcancel)
+        
+        self.Value = 0
+        self.exec_()
+    
+    def getValue(self):
+        return self.Value
+    
+    def fsetValue(self, n):
+        self.Value = n
+        self.close()
+    
+    def fcancel(self):
+        self.Value = -1
+        self.close()
+    
+############################
 class copyThread(QThread):
     
     sig = pyqtSignal(list)
@@ -943,7 +1077,7 @@ class copyThread(QThread):
                 else:
                     self.sig.emit(["Cancelled!", 1, total_size, items_skipped])
                     return
-            self.sig.emit(["Done", 1, total_size, items_skipped])
+            self.sig.emit(["mDone", 1, total_size, items_skipped])
         # cut
         elif action == 2:
             i = 0
@@ -955,10 +1089,8 @@ class copyThread(QThread):
                         #
                         if os.path.islink(dfile):
                             incr_size += 512
-                            # create a link to the file, do not copy the symlink
                             ltarget = QFile.symLinkTarget(dfile)
                             os.symlink(ltarget, newList[i+1])
-                            # delete the original link
                             os.unlink(dfile)
                         elif os.path.isfile(dfile):
                             incr_size += max(QFileInfo(dfile).size(), 512)
@@ -975,7 +1107,7 @@ class copyThread(QThread):
                 else:
                     self.sig.emit(["Cancelled!", 1, total_size, items_skipped])
                     return
-            self.sig.emit(["Done", 1, total_size, items_skipped])
+            self.sig.emit(["mDone", 1, total_size, items_skipped])
         # link
         elif action == 4:
             i = 0
@@ -1013,7 +1145,7 @@ class copyThread(QThread):
                 else:
                     self.sig.emit(["Cancelled!", 1, total_size, items_skipped])
                     return
-            self.sig.emit(["Done", 1, total_size, items_skipped])
+            self.sig.emit(["mDone", 1, total_size, items_skipped])
 
 
 class copyItems():
@@ -1057,7 +1189,6 @@ class copyItems():
         grid.addWidget(self.button2, 4, 2, 1, 2, Qt.AlignCenter)
         #
         self.mydialog.setLayout(grid)
-        #
         self.mythread = copyThread(self.action, self.newList)
         self.mythread.sig.connect(self.threadslot)
         self.mythread.start()
@@ -1094,7 +1225,449 @@ class copyItems():
     def fbutton2(self):
         self.mythread.requestInterruption()
 
+################################
+class copyThread2(QThread):
+    
+    sig = pyqtSignal(list)
+    
+    def __init__(self, action, newList, atype, pathdest, parent=None):
+        super(copyThread2, self).__init__(parent)
+        self.action = action
+        self.newList = newList
+        # 1 skip - 2 overwrite - 3 rename - 4 automatic suffix
+        self.atype = atype
+        # destination path
+        self.pathdest = pathdest
+        #
+        self.sig.connect(self.provasygnal)
+        self.reqNewNm = ""
+    
+    def provasygnal(self, l=None):
+        if l[0] == "SendNewName":
+            self.reqNewNm = l[1]
+        #
+        elif l[0] == "SendNewAtype":
+            self.reqNewNm = l[1]
 
+    def run(self):
+        time.sleep(1)
+        self.item_op()
+
+    # inutile 
+    def folder_size(self, path):
+        total_size = 0
+        for dirpath, dirnames, filenames in os.walk(path):
+            for fl in filenames:
+                flp = os.path.join(dirpath, fl)
+                if os.access(flp, os.R_OK):
+                    if not os.path.exists(flp):
+                        continue
+                    total_size += os.path.getsize(flp)
+        return total_size 
+
+    # add a suffix to the filename if the file exists at destination
+    def faddSuffix(self, dest):
+        if os.path.exists(dest) or os.path.islink(dest):
+            if USE_DATE == 1:
+                z = datetime.datetime.now()
+                #dY, dM, dD, dH, dm, ds, dms
+                dts = "_{}.{}.{}_{}.{}.{}".format(z.year, z.month, z.day, z.hour, z.minute, z.second)
+                new_name = os.path.basename(dest)+dts
+                dest = os.path.join(os.path.dirname(dest), new_name)
+                
+                return dest
+            
+            elif USE_DATE == 0:
+                i = 1
+                dir_name = os.path.dirname(dest)
+                bname = os.path.basename(dest)
+                dest = ""
+                while i:
+                    nn = bname+"_("+str(i)+")"
+                    if os.path.exists(os.path.join(self.lvDir, nn)):
+                        i += 1
+                    else:
+                        dest = os.path.join(dir_name, nn)
+                        i = 0
+                return dest
+
+    
+    # self.atype: 1 skip - 2 overwrite - 3 rename - 4 automatic suffix
+    def item_op(self):
+        items_skipped = ""
+        #
+        action = self.action
+        newList = self.newList
+        total_size = 0
+        incr_size = 0
+        
+        for sitem in newList[::2]:
+            if os.path.islink(sitem):
+                total_size += 512
+            elif os.path.isfile(sitem):
+                item_size = QFileInfo(sitem).size()
+                total_size += max(item_size, 512)
+            elif os.path.isdir(sitem):
+                total_size += 512
+
+
+        self.sig.emit(["Starting...", 0, total_size])
+        #
+        for dfile in newList:
+            #
+            if os.path.isfile(dfile) or os.path.islink(dfile):
+                tdest = os.path.join(self.pathdest, os.path.basename(dfile))
+                if dfile != tdest:
+                    if os.path.exists(tdest) or os.path.islink(tdest):
+                        if self.atype == 1:
+                            items_skipped += "{}:\n{}\n------------\n".format(dfile, "Skipped.")
+                            continue
+                        elif self.atype == 2:
+                            try:
+                                if os.path.islink(dfile):
+                                    if not os.path.exists(os.readlink(dfile)):
+                                        items_skipped += "{}:\n{}\n------------\n".format(dfile, "Broken link.")
+                                        continue
+                                if os.path.islink(tdest):
+                                    os.unlink(tdest)
+                                    self.sig.emit([os.path.basename(dfile), incr_size/total_size, total_size])
+                                    # 
+                                    if action == 1:
+                                        shutil.copy2(dfile, tdest, follow_symlinks=False)
+                                    elif action == 2:
+                                        shutil.move(dfile, tdest)
+                                    incr_size += max(QFileInfo(dfile).size(), 512)
+                                    self.sig.emit([os.path.basename(dfile), incr_size/total_size, total_size])
+                                else:
+                                    self.sig.emit([os.path.basename(dfile), incr_size/total_size, total_size])
+                                    # 
+                                    if action == 1:
+                                        shutil.copy2(dfile, tdest, follow_symlinks=False)
+                                    elif action == 2:
+                                        shutil.move(dfile, tdest)
+                                    incr_size += max(QFileInfo(dfile).size(), 512)
+                                    self.sig.emit([os.path.basename(dfile), incr_size/total_size, total_size])
+                            except Exception as E:
+                                items_skipped += "{}:\n{}\n------------\n".format(dfile, str(E))
+                        elif self.atype == 3:
+                            try:
+                                iDestPath = os.path.dirname(tdest)
+                                self.sig.emit(["ReqNewName", os.path.basename(dfile), iDestPath])
+                                while self.reqNewNm == "":
+                                    time.sleep(1)
+                                else:
+                                    if self.reqNewNm == -1:
+                                        items_skipped += "{}:\n{}\n------------\n".format(dfile, "Skipped.")
+                                    try:
+                                        self.sig.emit([os.path.basename(dfile), incr_size/total_size, total_size])
+                                        shutil.copy2(dfile, os.path.join(iDestPath,self.reqNewNm), follow_symlinks=False)
+                                        #
+                                        if action == 2:
+                                            os.remove(dfile)
+                                        if os.path.islink(dfile):
+                                            incr_size += 512
+                                        else:
+                                            incr_size += max(QFileInfo(dfile).size(), 512)
+                                        self.sig.emit([os.path.basename(dfile), incr_size/total_size, total_size])
+                                    except Exception as E:
+                                        items_skipped += "{}:\n{}\n------------\n".format(dfile, str(E))
+                                        self.reqNewNm = ""
+                                    self.reqNewNm = ""
+                            except Exception as E:
+                                items_skipped += "{}:\n{}\n------------\n".format(dfile, str(E))
+                        elif self.atype == 4:
+                            try:
+                                self.sig.emit([os.path.basename(dfile), incr_size/total_size, total_size])
+                                ret = self.faddSuffix(tdest)
+                                shutil.copy2(dfile, ret, follow_symlinks=False)
+                                #
+                                if action == 2:
+                                    os.remove(dfile)
+                                incr_size += max(QFileInfo(dfile).size(), 512)
+                                self.sig.emit([os.path.basename(dfile), incr_size/total_size, total_size])
+                            except Exception as E:
+                                items_skipped += "{}:\n{}\n------------\n".format(dfile, str(E))
+                #
+                else:
+                    items_skipped += "{}:\n{}\n------------\n".format(dfile, "Exactly same item.")
+            # dir
+            elif os.path.isdir(dfile):
+                #
+                tdest = os.path.join(self.pathdest, os.path.basename(dfile))
+                #
+                len_dfile = len(dfile)
+                # 1 skip - 2 replace - 3 new name - a automatic
+                dcode = 0
+                # se non sono la stessa dir
+                if dfile != tdest:
+                    #
+                    for sdir, dirs, files in os.walk(dfile):
+                        origdir = os.path.join(dfile,sdir)
+                        destdir = tdest+sdir[len_dfile:]
+                        if not os.path.exists(destdir):
+                            try:
+                                self.sig.emit([sdir, incr_size/total_size, total_size])
+                                if os.path.islink(destdir):
+                                    os.unlink(destdir)
+                                    items_skipped += "{}:\nDeleted because broken link.\n------------\n".format(destdir)
+                                os.makedirs(destdir)
+                                incr_size += 512
+                                self.sig.emit([sdir, incr_size/total_size, total_size])
+                            except Exception as E:
+                                items_skipped += "{}:\n{}\n------------\n".format(destdir, str(E))
+                        else:
+                            try:
+                                self.sig.emit([sdir, incr_size/total_size, total_size])
+                                #
+                                if os.path.isdir(destdir):
+                                    pass
+                                ###
+                                else:
+                                    self.sig.emit(["ReqNewAtype"])
+                                    while self.reqNewNm == "":
+                                        time.sleep(1)
+                                    else:
+                                        dcode = self.reqNewNm
+                                        self.reqNewNm = ""
+                                        if dcode == -1:
+                                            MyDialog("Info", "Cancelled.")
+                                            break
+                                        elif dcode == 1:
+                                            items_skipped += "{}:\n{}\n------------\n".format(destdir, "Skipped.")
+                                        elif dcode == 2:
+                                            try:
+                                                self.sig.emit([sdir, incr_size/total_size, total_size])
+                                                if os.path.islink(destdir):
+                                                    os.unlink(destdir)
+                                                #
+                                                ret = self.faddSuffix(destdir)
+                                                os.rename(destdir, os.path.join(os.path.dirname(destdir),ret))
+                                                items_skipped += "{}:\nRenamed:\n{}\n------------\n".format(destdir, ret)
+                                                shutil.copytree(origdir, destdir, symlinks=True, ignore=None, copy_function=shutil.copy2, ignore_dangling_symlinks=False)
+                                                #
+                                                incr_size += 512
+                                                self.sig.emit([sdir, incr_size/total_size, total_size])
+                                            except Exception as E:
+                                                items_skipped += "{}:\n{}\n------------\n".format(origdir, str(E))
+                                        elif dcode == 3:
+                                            try:
+                                                iDestPath = os.path.dirname(destdir)
+                                                self.sig.emit(["ReqNewName", os.path.basename(sdir), iDestPath])
+                                                while self.reqNewNm == "":
+                                                    time.sleep(1)
+                                                else:
+                                                    if self.reqNewNm == -1:
+                                                        items_skipped += "{}:\n{}\n------------\n".format(origdir, "Skipped.")
+                                                    #
+                                                    self.sig.emit([sdir, incr_size/total_size, total_size])
+                                                    shutil.copytree(origdir, os.path.join(iDestPath,self.reqNewNm), symlinks=True, ignore=None, copy_function=shutil.copy2, ignore_dangling_symlinks=False)
+                                                    incr_size += 512
+                                                    self.sig.emit([sdir, incr_size/total_size, total_size])
+                                            except Exception as E:
+                                                items_skipped += "{}:\n{}\n------------\n".format(origdir, str(E))
+                                                self.reqNewNm = ""
+                                            self.reqNewNm = ""
+                                        elif dcode == 4:
+                                            try:
+                                                self.sig.emit([origdir, incr_size/total_size, total_size])
+                                                ret = self.faddSuffix(destdir)
+                                                os.makedirs(os.path.join(os.path.dirname(destdir), ret))
+                                                incr_size += 512
+                                                self.sig.emit([origdir, incr_size/total_size, total_size])
+                                            except Exception as E:
+                                                items_skipped += "{}:\n{}\n------------\n".format(origdir, str(E))
+                                    #
+                                    dcode = 0
+
+                                self.sig.emit([os.path.basename(destdir), incr_size/total_size, total_size])
+                            except Exception as E:
+                                items_skipped += "{}:\n{}\n------------\n".format(os.path.basename(destdir), str(E))
+                        #
+                        # files
+                        for item in files:
+                            origfpath = os.path.join(sdir,item)
+                            destfpath = os.path.join(destdir,item)
+                            if os.path.exists(destfpath):
+                                #
+                                self.sig.emit(["ReqNewAtype"])
+                                while self.reqNewNm == "":
+                                    time.sleep(1)
+                                else:
+                                    dcode = self.reqNewNm
+                                    self.reqNewNm = ""
+                                    if dcode == -1:
+                                        MyDialog("Info", "Cancelled.")
+                                        break
+                                    elif dcode == 1:
+                                        items_skipped += "{}:\n{}\n------------\n".format(origfpath, "Skipped.")
+                                    elif dcode == 2:
+                                        try:
+                                            self.sig.emit([item, incr_size/total_size, total_size])
+                                            if os.path.islink(destfpath):
+                                                os.unlink(destfpath)
+                                            elif os.path.isdir(destfpath):
+                                                shutil.rmtree(destfpath)
+                                            #
+                                            shutil.copy2(origfpath, os.path.join(os.path.dirname(destfpath),self.reqNewNm), follow_symlinks=False)
+                                            if os.path.islink(origfpath):
+                                                incr_size += 512
+                                            else:
+                                                incr_size += max(QFileInfo(origfpath).size(), 512)
+                                            self.sig.emit([item, incr_size/total_size, total_size])
+                                        except Exception as E:
+                                            items_skipped += "{}:\n{}\n------------\n".format(origfpath, str(E))
+                                    elif dcode == 3:
+                                        try:
+                                            iDestPath = os.path.dirname(destfpath)
+                                            self.sig.emit(["ReqNewName", item, iDestPath])
+                                            while self.reqNewNm == "":
+                                                time.sleep(1)
+                                            else:
+                                                if self.reqNewNm == -1:
+                                                    items_skipped += "{}:\n{}\n------------\n".format(origfpath, "Skipped.")
+                                                try:
+                                                    self.sig.emit([item, incr_size/total_size, total_size])
+                                                    shutil.copy2(origfpath, os.path.join(iDestPath,self.reqNewNm), follow_symlinks=False)
+                                                    if os.path.islink(origfpath):
+                                                        incr_size += 512
+                                                    else:
+                                                        incr_size += max(QFileInfo(origfpath).size(), 512)
+                                                    self.sig.emit([item, incr_size/total_size, total_size])
+                                                except Exception as E:
+                                                    items_skipped += "{}:\n{}\n------------\n".format(origfpath, str(E))
+                                                    self.reqNewNm = ""
+                                                self.reqNewNm = ""
+                                        except Exception as E:
+                                            items_skipped += "{}:\n{}\n------------\n".format(origfpath, str(E))
+                                    elif dcode == 4:
+                                        try:
+                                            self.sig.emit([item, incr_size/total_size, total_size])
+                                            ret = self.faddSuffix(destfpath)
+                                            shutil.copy2(origfpath, ret, follow_symlinks=False)
+                                            incr_size += max(QFileInfo(origfpath).size(), 512)
+                                            self.sig.emit([item, incr_size/total_size, total_size])
+                                        except Exception as E:
+                                            items_skipped += "{}:\n{}\n------------\n".format(origfpath, str(E))
+                                #
+                                dcode = 0
+                            #
+                            else:
+                                if os.path.islink(destfpath):
+                                    try:
+                                        os.unlink(destfpath)
+                                        items_skipped += "{}:\nDeleted because broken link.\n------------\n".format(destfpath)
+                                    except Exception as E:
+                                        items_skipped += "{}:\n{}\n------------\n".format(destfpath, str(E))
+                                shutil.copy2(origfpath, destfpath, follow_symlinks=False)
+                    if action == 1:
+                        shutil.rmtree(sdir)
+                #
+                else:
+                    items_skipped += "{}:\n{}\n------------\n".format(os.path.basename(dfile), "Same item.")
+            if action == 2:
+                try:
+                    if os.path.islink(dfile):
+                        os.unlink(dfile)
+                    else:
+                        shutil.rmtree(dfile)
+                except Exception as E:
+                    items_skipped += "{}:\n{}\n------------\n".format(os.path.basename(dfile), str(E))
+        #
+        # DONE
+        self.sig.emit(["mDone", 1, total_size, items_skipped])
+
+
+class copyItems2():
+    def __init__(self, action, newList, atype, pathdest):
+        self.action = action
+        self.newList = newList
+        self.atype = atype
+        self.pathdest = pathdest
+        self.myDialog()
+
+    def myDialog(self):
+        self.mydialog = QDialog()
+        self.mydialog.setWindowIcon(QIcon("icons/file-manager-red.svg"))
+        self.mydialog.setWindowTitle("Copying...")
+        self.mydialog.setWindowModality(Qt.ApplicationModal)
+        self.mydialog.resize(600,300)
+        # 
+        grid = QGridLayout()
+        grid.setContentsMargins(5,5,5,5)
+        #
+        self.label1 = clabel2()
+        self.label1.setText("Processing...", self.mydialog.size().width()-12)
+        self.label1.setWordWrap(True)
+        grid.addWidget(self.label1, 0, 0, 1, 4, Qt.AlignCenter)
+        #
+        self.label2 = QLabel()
+        grid.addWidget(self.label2, 1, 0, 1, 4, Qt.AlignCenter)
+        #
+        self.pb = QProgressBar()
+        self.pb.setMinimum(0)
+        self.pb.setMaximum(100)
+        self.pb.setValue(0)
+        grid.addWidget(self.pb, 3, 0, 1, 4, Qt.AlignCenter)
+        #
+        self.button1 = QPushButton("Close")
+        self.button1.clicked.connect(self.fbutton1)
+        grid.addWidget(self.button1, 4, 0, 1, 2, Qt.AlignCenter)
+        #
+        self.button1.setEnabled(False)
+        #
+        self.button2 = QPushButton("Abort")
+        self.button2.clicked.connect(self.fbutton2)
+        grid.addWidget(self.button2, 4, 2, 1, 2, Qt.AlignCenter)
+        #
+        self.mydialog.setLayout(grid)
+        self.mythread = copyThread2(self.action, self.newList, self.atype, self.pathdest)
+        self.mythread.sig.connect(self.threadslot)
+        self.mythread.start()
+        #
+        self.mydialog.exec()
+
+    def convert_size(self, fsize2):
+        if fsize2 == 0 or fsize2 == 1:
+            sfsize = str(fsize2)+" byte"
+        elif fsize2//1024 == 0:
+            sfsize = str(fsize2)+" bytes"
+        elif fsize2//1048576 == 0:
+            sfsize = str(round(fsize2/1024, 3))+" KB"
+        elif fsize2//1073741824 == 0:
+            sfsize = str(round(fsize2/1048576, 3))+" MB"
+        else:
+            sfsize = str(round(fsize2/1048576))+" MB"
+        
+        return sfsize    
+    
+    def threadslot(self, aa):
+        # aa[0] codice - aa[1] dir - aa[2] item name
+        if aa[0] == "ReqNewName":
+            # item name - dest path
+            sNewName = MyDialogRename22(aa[1],aa[2]).getValues()
+            self.mythread.sig.emit(["SendNewName", sNewName])
+        #
+        elif aa[0] == "ReqNewAtype":
+            sNewAtype = pasteNmergeDialog("", 1).getValue()
+            self.mythread.sig.emit(["SendNewAtype", sNewAtype])
+        #
+        elif aa[0] not in ["ReqNewName","SendNewName","ReqNewAtype","SendNewAtype"]:
+            self.label1.setText(aa[0], self.mydialog.size().width()-12)
+            self.label2.setText("Total size: {}".format(self.convert_size(aa[2])))
+            self.pb.setValue(int(aa[1]*100))
+            if self.pb.value() == 100:
+                self.button1.setEnabled(True)
+                self.button2.setEnabled(False)
+            if len(aa) == 4 and aa[3] != "":
+                MyMessageBox("Info", "Some errors with some items", "", aa[3])
+
+    def fbutton1(self):
+        self.mydialog.close()
+
+    def fbutton2(self):
+        self.mythread.requestInterruption()
+
+#################################
 class MyQlist(QListView):
     def __init__(self, parent=None):
         super(MyQlist, self).__init__(parent)
@@ -1538,7 +2111,7 @@ class MainWin(QWidget):
             self.openDir(parg, 1)
         else:
             self.openDir(HOME, 1)
-
+    
     def keyPressEvent(self, event):
         if event.modifiers() ==  Qt.ControlModifier:
             if event.key() == Qt.Key_S:
@@ -1832,7 +2405,6 @@ class openTrash(QBoxLayout):
                 MyDialog("Info", path+"\n\n   Not readable")
         elif os.path.isfile(path):
             perms = QFileInfo(path).permissions()
-            
             if perms & QFile.ExeOwner:
                 imime = QMimeDatabase().mimeTypeForFile(path, QMimeDatabase.MatchDefault).name()
                 if imime == "application/x-sharedlib":
@@ -2652,7 +3224,7 @@ class LView(QBoxLayout):
         if USE_THUMB == 1:
             thread = thumbThread(self.lvDir, self.fileModel, self.listview)
             thread.start()
-        
+    
     def itemsToTrash(self):
         if self.selection:
             self.ftrashAction()
@@ -2732,11 +3304,10 @@ class LView(QBoxLayout):
         self.label2.setText("Path")
         
         if os.path.islink(path):
-            linked_target = os.path.realpath(path)
-            if os.path.exists(linked_target):
-                self.label6.setText("link to {}".format(linked_target), self.window.size().width())
+            if os.path.exists(os.path.realpath(path)):
+                self.label6.setText("link to {}".format(os.path.realpath(path)), self.window.size().width())
             else:
-                self.label6.setText("broken link to {}".format(linked_target), self.window.size().width())
+                self.label6.setText("broken link to {}".format(os.readlink(path)), self.window.size().width())
         else:
             self.label6.setText(self.lvDir, self.window.size().width())
         
@@ -2803,7 +3374,6 @@ class LView(QBoxLayout):
                     return
 
             defApp = self.defaultApplication(path)
-            
             if defApp != "None":
                 try:
                     subprocess.Popen([defApp, path])
@@ -2821,6 +3391,7 @@ class LView(QBoxLayout):
                 mimetype = "text/plain"
             else:
                 mimetype = imime
+            
             #
             try:
                 associatedDesktopProgram = subprocess.check_output([ret, "query", "default", mimetype], universal_newlines=False).decode()
@@ -2981,6 +3552,7 @@ class LView(QBoxLayout):
                         trashAction.triggered.connect(self.ftrashAction)
                         menu.addAction(trashAction)
             
+            # delete function
             if USE_DELETE:
                 if self.flag != 2:
                     deleteAction = QAction("Delete", self)
@@ -3038,7 +3610,7 @@ class LView(QBoxLayout):
                     menu.addAction(propertyAction)
             #
             menu.exec_(self.listview.mapToGlobal(position))
-        
+        #
         else:
             self.listview.clearSelection()
             menu = QMenu("Menu", self.listview)
@@ -3085,9 +3657,9 @@ class LView(QBoxLayout):
                 menu.addAction(pastAction)
             
             if self.flag != 2:
-                pasteNmergeAction = QAction("Paste and Merge (todo)", self)
-                #pasteNmergeAction.triggered.connect(self.fpasteNmergeAction)
-                pasteNmergeAction.setDisabled(True)
+                pasteNmergeAction = QAction("Paste and Merge", self)
+                pasteNmergeAction.triggered.connect(self.fpasteNmergeAction)
+                #pasteNmergeAction.setDisabled(True)
                 menu.addAction(pasteNmergeAction)
 
             menu.addSeparator()
@@ -3149,19 +3721,179 @@ class LView(QBoxLayout):
         else:
             MyDialog("Error", "Cannot open the folder: "+os.path.basename(ldir))
 
+############# Paste and Merge section
+    
+    
+    # add a suffix to the filename if the file exists at destination
+    def faddSuffix(self, dest):
+        if os.path.exists(dest):
+            if USE_DATE == 1:
+                z = datetime.datetime.now()
+                #dY, dM, dD, dH, dm, ds, dms
+                dts = "_{}.{}.{}_{}.{}.{}".format(z.year, z.month, z.day, z.hour, z.minute, z.second)
+                new_name = os.path.basename(dest)+dts
+                dest = os.path.join(os.path.dirname(dest), new_name)
+                
+                return dest
+            
+            elif USE_DATE == 0:
+                i = 1
+                dir_name = os.path.dirname(dest)
+                bname = os.path.basename(dest)
+                dest = ""
+                while i:
+                    nn = bname+"_("+str(i)+")"
+                    if os.path.exists(os.path.join(self.lvDir, nn)):
+                        i += 1
+                    else:
+                        dest = os.path.join(dir_name, nn)
+                        i = 0
+                return dest
+    
+
+    def fnewList2(self, filePaths, dest_path):
+        nlist = []
+        # items not added
+        items_skipped = ""
+        for ditem in filePaths:
+            if os.path.islink(ditem):
+                nlist.append(ditem)
+            elif os.path.isfile(ditem):
+                if os.access(ditem, os.R_OK):
+                    nlist.append(ditem)
+                else:
+                    items_skipped += "{}\nNot readable.\n-----------\n".format(os.path.basename(ditem))
+            # it is dir
+            elif os.path.isdir(ditem):
+                if os.access(ditem, os.R_OK):
+                    nlist.append(ditem)
+                else:
+                    items_skipped += "{}\nNot readable.\n-----------\n".format(os.path.basename(ditem))
+        
+        if items_skipped != "":
+            MyMessageBox("Info", "Items skipped", "", items_skipped)
+        return nlist
+
+    def fpasteAction2(self, atype):
+        # check il the destination folder is writable
+        if not os.access(self.lvDir, os.W_OK):
+            MyDialog("Info", "This folder is not writable.")
+            return
+        clipboard = QApplication.clipboard()
+        mimeData = clipboard.mimeData(QClipboard.Clipboard)
+        
+        got_quoted_data = []
+        for f in mimeData.formats():
+            if f == "x-special/gnome-copied-files":
+                data = mimeData.data(f)
+                got_quoted_data = data.data().decode().split("\n")
+                
+                got_action = got_quoted_data[0]
+                if got_action == "copy":
+                    action = 1
+                elif got_action == "cut":
+                    action = 2
+                filePaths = [unquote(x)[7:] for x in got_quoted_data[1:]]
+                #
+                # a folder cannot be copied into itself or into a its subfolder
+                for item in filePaths:
+                    if os.path.isdir(item):
+                        if item in self.lvDir:
+                            MyMessageBox("Info", "A folder cannot copied into itself.\nRetry.","",item)
+                            return
+                #
+                # html file needs its folder and viceversa
+                for item in filePaths:
+                    # if it is exists
+                    if os.path.exists(item):
+                        # if link pass
+                        if os.path.islink(item):
+                            continue
+                        if stat.S_ISREG(os.stat(item).st_mode):
+                            dir_name = os.path.dirname(item)
+                            nroot, ext = os.path.splitext(os.path.basename(item))
+                            if ext == ".html" or ext == ".htm":
+                                fname = os.path.join(dir_name, nroot+"_files")
+                                if os.path.exists(fname):
+                                    if fname not in filePaths:
+                                        if stat.S_ISDIR(os.stat(fname).st_mode) and os.access(fname, os.R_OK):
+                                            filePaths.append(fname)
+                        if stat.S_ISDIR(os.stat(item).st_mode):
+                            dir_name = os.path.dirname(item)
+                            base_name = os.path.basename(item)
+                            nroot = base_name[:-6]
+                            if not os.path.join(dir_name, nroot+".html") in filePaths:
+                                if os.path.exists(os.path.join(dir_name, nroot+".html")):
+                                    filePaths.append(os.path.join(dir_name, nroot+".html"))
+                            if not os.path.join(dir_name, nroot+".htm") in filePaths:
+                                if os.path.exists(os.path.join(dir_name, nroot+".htm")):
+                                    filePaths.append(os.path.join(dir_name, nroot+".htm"))
+                
+                newList = self.fnewList2(filePaths, self.lvDir)
+                if atype == -1:
+                    MyDialog("Info", "Calcelled.")
+                    return
+                if newList:
+                    copyItems2(action, newList, atype, self.lvDir)
+    
+    def fnumItemsSame(self):
+        clipboard = QApplication.clipboard()
+        mimeData = clipboard.mimeData(QClipboard.Clipboard)
+        for f in mimeData.formats():
+            if f == "x-special/gnome-copied-files":
+                data = mimeData.data(f)
+                got_quoted_data = data.data().decode().split("\n")
+                filePaths = [unquote(x)[7:] for x in got_quoted_data[1:]]
+                # check if already present at destination
+                itemsAtDest = []
+                for item in filePaths:
+                    # it is a symlink or a broken symlink
+                    if os.path.islink(item):
+                        # an item exists at destination: file, dir or (broken) link
+                        if os.path.exists(os.path.join(self.lvDir, os.path.basename(item))) or os.path.islink(os.path.join(self.lvDir, os.path.basename(item))):
+                            itemsAtDest.append(item)
+                    # it is a file
+                    if os.path.isfile(item):
+                        # an item exists at destination: file, dir or (broken) link
+                        if os.path.exists(os.path.join(self.lvDir, os.path.basename(item))) or os.path.islink(os.path.join(self.lvDir, os.path.basename(item))):
+                            itemsAtDest.append(item)
+                
+                return len(itemsAtDest)
+                    
+
+    def fpasteNmergeAction(self):
+        # number of items with the same name at destination
+        isame = self.fnumItemsSame()
+        if isame == None:
+            return
+        elif isame > 0:
+            # ret: 1 skip - 2 overwrite - 3 new name - 4 automatic
+            ret = pasteNmergeDialog(None, isame).getValue()
+            #
+            self.fpasteAction2(ret)
+        elif isame == 0:
+            self.fpasteAction2(2)
+
+#################
     
     def ftrashAction(self):
-        list_items = []
-        for item in self.selection:
-            list_items.append(self.fileModel.fileInfo(item).absoluteFilePath())
-        
-        dialogList = ""
-        for item in list_items:
-            dialogList += os.path.basename(item)+"\n"
-        ret = retDialogBox("Info", "Do you really want to move this item(s) to the trash?", "", dialogList)
-        #
-        if ret.getValue():
-            TrashModule(list_items)
+        if self.selection:
+            list_items = []
+            for item in self.selection:
+                list_items.append(self.fileModel.fileInfo(item).absoluteFilePath())
+            
+            # if more than 30 items no list
+            if len(self.selection) < ITEMSDELETED:
+                dialogList = ""
+                for item in list_items:
+                    dialogList += os.path.basename(item)+"\n"
+                ret = retDialogBox("Info", "Do you really want to move this item(s) to the trash?", "", dialogList)
+            else:
+                ret = retDialogBox("Info", "Do you really want to move this item(s) to the trash?", "", "Too many items.\n")
+            
+            #
+            if ret.getValue():
+                TrashModule(list_items)
         
     # bypass the trashcan
     def fdeleteAction(self):
@@ -3170,10 +3902,14 @@ class LView(QBoxLayout):
             for item in self.selection:
                 list_items.append(self.fileModel.fileInfo(item).absoluteFilePath())
             
-            dialogList = ""
-            for item in list_items:
-                dialogList += os.path.basename(item)+"\n"
-            ret = retDialogBox("Info", "Do you really want to delete this item(s)?", "", dialogList)
+            # if more than 30 items no list
+            if len(self.selection) < ITEMSDELETED:
+                dialogList = ""
+                for item in list_items:
+                    dialogList += os.path.basename(item)+"\n"
+                ret = retDialogBox("Info", "Do you really want to delete this item(s)?", "", dialogList)
+            else:
+                ret = retDialogBox("Info", "Do you really want to delete this item(s)?", "", "Too many items.\n")
             #
             if ret.getValue():
                 self.fdeleteItems(list_items)
@@ -3183,6 +3919,7 @@ class LView(QBoxLayout):
         items_skipped = ""
         
         for item in listItems:
+            time.sleep(0.1)
             if os.path.islink(item):
                 try:
                     os.remove(item)
@@ -3347,7 +4084,6 @@ class LView(QBoxLayout):
                 elif got_action == "cut":
                     action = 2
                 filePaths = [unquote(x)[7:] for x in got_quoted_data[1:]]
-                # a folder cannot be copied into itself or into a its subfolder
                 for item in filePaths:
                     if os.path.isdir(item):
                         if item in self.lvDir:
@@ -3391,8 +4127,8 @@ class LView(QBoxLayout):
         for iindex in self.selection:
             iname = iindex.data(QFileSystemModel.FileNameRole)
             iname_fp = os.path.join(self.lvDir, iname)
-
-            if stat.S_ISREG(os.stat(iname_fp).st_mode) or stat.S_ISDIR(os.stat(iname_fp).st_mode) or stat.S_ISLNK(os.stat(iname_fp).st_mode):
+            
+            if os.access(iname_fp,os.R_OK) or os.path.islink(iname_fp):
                 iname_quoted = quote(iname, safe='/:?=&')
                 if iindex != self.selection[-1]:
                     iname_final = "file://{}\n".format(os.path.join(self.lvDir, iname_quoted))
@@ -3400,8 +4136,6 @@ class LView(QBoxLayout):
                 else:
                     iname_final = "file://{}".format(os.path.join(self.lvDir, iname_quoted))
                     item_list += iname_final
-            else:
-                continue
         
         if item_list == "copy\n":
             clipboard = QApplication.clipboard()
