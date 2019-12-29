@@ -1,3 +1,6 @@
+* 20191229 alpha 3
+- Paste and Merge action: implemented
+- some other little changes
 * 20191223 alpha 2
 - more on copying/cutting, expecially on links
 - a folder cannot be copied into itself or into its subfolders
