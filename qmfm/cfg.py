@@ -21,6 +21,11 @@ USE_DELETE = 1
 USE_TRASH = 0
 # load the media module: 0 no - 1 yes
 USE_MEDIA = 0
+# Paste and Merge, how to backup the new files: 0 add progressive number
+# in the form _(#) - 1 add date and time (without checking eventually
+# existing file at destination with same date and time suffix) 
+# in the form _yy.mm.dd_hh.mm.ss
+USE_DATE = 1
 # use background colour in the listview widgets: 0 no - 1 yes
 USE_BACKGROUND_COLOUR = 1
 # listview background color: red, green, blue
