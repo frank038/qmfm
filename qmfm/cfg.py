@@ -9,6 +9,8 @@ ITEM_WIDTH = 180
 ITEM_HEIGHT = 180
 # icon size
 ICON_SIZE = 160
+# thumb size
+THUMB_SIZE = 160
 # other icons size: link and permissions
 ICON_SIZE2 = 48
 # space between items
@@ -17,6 +19,8 @@ ITEM_SPACE = 25
 FONT_SIZE = 12
 # show delete context menu entry that bypass the trashcan: 0 no - 1 yes
 USE_DELETE = 1
+# use the Paste and Merge action - at your own risk: 0 no - 1 yes
+USE_PM = 1 
 # load the trash module: 0 no - 1 yes
 USE_TRASH = 0
 # load the media module: 0 no - 1 yes
