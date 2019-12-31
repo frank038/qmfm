@@ -1,6 +1,8 @@
-Version 20191230 alpha 4
+Version 20191231 alpha 5
 
 The zip package is just for the checksums and contains all the project files.
+
+This program has absolutely no warranty.
 
 Required: 
 base module: Python3, Pyqt5, PyXdg, xdg-utils
