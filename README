@@ -1,11 +1,11 @@
-Version 20200102 alpha 6
+Version 20200110 alpha 7
 
 The zip package is just for the checksums and contains all the project files.
 
 This program has absolutely no warranty.
 
 Required: 
-base module: Python3, Pyqt5, PyXdg, xdg-utils
+base module: Python3 (min. 3.3), Pyqt5, PyXdg, xdg-utils
 optional media module: python3-dbus.
 
 Just launch the file qmfm.py from the project directory to open the home folder,
