@@ -1,3 +1,5 @@
+* 20200119 alpha 10
+- corrected a bug in the "open with" function
 * 20200119 alpha 9
 - can handle the preferences stored in .config/mimeapps.list
 * 20200117 alpha 8
