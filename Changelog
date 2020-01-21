@@ -1,3 +1,5 @@
+* 20200121 alpha 11
+- simplifications (the program is faster in some circumstances)
 * 20200119 alpha 10
 - corrected a bug in the "open with" function
 * 20200119 alpha 9
