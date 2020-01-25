@@ -1,4 +1,4 @@
-Version 20200124 alpha 13
+Version 20200125 alpha 14
 
 The zip package is just for the checksums and contains all the project files.
 
@@ -15,7 +15,7 @@ or open a different folder from the command line or by chancing the config file.
 
 The optional disks and trash modules do not track any changes while their tabs are open.
 
-The disks tab let user manage the recycle bin of every partition, if supported.
+The disks tab let user manage the recycle bin of every partitions, if supported.
 This means the home recycle bin is indipendent from the recycle bin of the other
 storage masses.
 
@@ -34,14 +34,14 @@ folder.
 
 At the moment the hidden features are:
 - CTRL+s : the window size is saved; in fullscreen mode only this state is saved.
-- The program accept a folder or file path as argument.
+- The program accept a folder path as argument.
 - When html/htm files are copied or dropped into this program the associated 
 folders will be copied too, and viceversa.
 - Recycle bin tabs: the files have a contextual menu; folders can be opened in a
 new tab, and files opened with the default program, if any, with a double click.
 - Progress dialog during copying operations: the current copying operation cannot be
 interrupted, only the following ones can be interrupted.
-- Delete key: selected items into recycle bin.
+- Delete (canc) key: selected items into the recycle bin if choosen so in the config file.
 
 What is not implemented and maybe never will be implemented:
 - the XDS protocol, due to lack of documentation.
