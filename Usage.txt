@@ -1,0 +1,17 @@
+The behaviours of this program depend on the library defaults mostly.
+
+Multi selection:
+- to date, the SHIFT key is been used for a row or multi row
+selection;
+- the first item selected is the master item; this means dragging 
+using the mouse must start from that item;
+
+Dragging:
+- the defaul action is copying;
+- to date, the SHIFT key must be pressed for moving action: first 
+select the items; then release the mouse buttons and then SHIFT+LEFT MOUSE BUTTON;
+- to date, SHIFT+CTRL+LMB make a link at destination;
+
+CTRL+s : the window size is saved; in fullscreen mode only this state is saved.
+
+Delete (canc) key: selected items into the recycle bin if choosen so in the config file.
