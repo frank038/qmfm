@@ -1,3 +1,7 @@
+* 20200127 beta 1
+- opening of the property dialog of not readable items
+- multiple selection: links have a fixed size of 512
+- the program is now in beta state
 * 20200125 alpha 14
 - no more trash can for items not in HOME dir or in mass storages
 - improvements
