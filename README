@@ -1,4 +1,4 @@
-Version 20200127 beta 1
+Version 20200201 beta 2
 
 The zip package is just for the checksums and contains all the project files.
 
@@ -7,6 +7,7 @@ This program has absolutely no warranty.
 Required: 
 base module: Python3 (min. 3.3), Pyqt5, PyXdg, xdg-utils
 optional media module: python3-dbus.
+optional assmime.py in utility folder: PyXdg
 
 Just launch the file qmfm.py from the project directory to open the home folder,
 or open a different folder from the command line or by chancing the config file.
