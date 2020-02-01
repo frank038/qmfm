@@ -1,3 +1,7 @@
+* 20200201 beta 2
+- added a basic utility for managing mimetype associations (folder Utility)
+- The trash can button opens one tab at a time
+- improvements
 * 20200127 beta 1
 - opening of the property dialog of not readable items
 - multiple selection: links have a fixed size of 512
