@@ -1,3 +1,8 @@
+- 20200203 beta 3
+- delete button: no more trashcan for items not in HOME dir or in mass storages
+- "Open with..." function: improved compatibility with local desktop files (Exec field: "$HOME" and "~" will be replaced with path)
+- improvements
+- utility assmime: improvements (while the pygtk module is a little buggy)
 * 20200201 beta 2
 - added a basic utility for managing mimetype associations (folder Utility)
 - The trash can button opens one tab at a time
