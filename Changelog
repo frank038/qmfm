@@ -1,8 +1,12 @@
-- 20200203 beta 3
+* 20200203 beta 3 - second
+- Utility assmime.py: it uses /etc/mime.types no more; 
+  it now uses regular files: this means that the program can only 
+  manage the known extensions. 
+* 20200203 beta 3
 - delete button: no more trashcan for items not in HOME dir or in mass storages
 - "Open with..." function: improved compatibility with local desktop files (Exec field: "$HOME" and "~" will be replaced with path)
 - improvements
-- utility assmime: improvements (while the pygtk module is a little buggy)
+- utility assmime: improvements (while some issues seem to be unrelated to this program)
 * 20200201 beta 2
 - added a basic utility for managing mimetype associations (folder Utility)
 - The trash can button opens one tab at a time
