@@ -1,3 +1,7 @@
+* 20200204 release
+- added the ability to highlight the file passed as argument
+- added the ability to highlight and to visualize the parent folder after the "Up" button is pressed
+- this program is in released state: only issues will be solved
 * 20200203 beta 3 - second
 - Utility assmime.py: it uses /etc/mime.types no more; 
   it now uses regular files: this means that the program can only 
