@@ -1,3 +1,7 @@
+* 20200208 release
+- mouse middle button: opens the selected folder in the same view
+  or in another tab (option in the config file)
+- solved an issue in the pythump module
 * 20200205 release
 - scrollbar: make sure it is always on top at folder opening
 * 20200204 release
