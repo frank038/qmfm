@@ -15,3 +15,6 @@ select the items; then release the mouse buttons and then SHIFT+LEFT MOUSE BUTTO
 CTRL+s : the window size is saved; in fullscreen mode only this state is saved.
 
 Delete (canc) key: selected items into the recycle bin if choosen so in the config file.
+
+Middle mouse button: opens the selected folder in the same view or
+in another tab, depending on the choise made in the config file.
