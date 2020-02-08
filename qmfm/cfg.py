@@ -1,6 +1,8 @@
 ### main program
 # directory to open - full path or HOME
 FOLDER_TO_OPEN = "HOME"
+# mouse middle button behaviour: 0 open the folder in the same view - 1 open the folder in another tab
+IN_SAME = 0
 # thumbnailers: 0 no - 1 yes
 USE_THUMB = 1
 # icon cell width - greater than ICON_SIZE
