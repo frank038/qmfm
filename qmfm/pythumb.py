@@ -51,7 +51,8 @@ def check_mtime(fpath):
     if os.path.isfile(tpath):
         ireader = QImageReader(tpath, b'png')
         omtime = ireader.text("ThumbMTime")
-
+    if omtime == "":
+        omtime = 0
     return [fmtime, omtime]
 
 def createimagethumb(fpath, el):
