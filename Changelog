@@ -1,7 +1,11 @@
+* 20200210 release
+- the Paste action can be hidden (option in the config file: USE_PM)
+- some dialogs now can be resize
+- little changes and improvements
 * 20200208 release
 - mouse middle button: opens the selected folder in the same view
   or in another tab (option in the config file)
-- solved an issue in the pythump module
+- solved an issue in the pythumb module
 * 20200205 release
 - scrollbar: make sure it is always on top at folder opening
 * 20200204 release
