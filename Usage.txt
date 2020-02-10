@@ -1,16 +1,15 @@
-The behaviours of this program depend on the library defaults mostly.
+The behaviours of this program alse depend on the library defaults.
 
 Multi selection:
-- to date, the SHIFT key is been used for a row or multi row
-selection;
-- the first item selected is the master item; this means dragging 
-using the mouse must start from that item;
+- to date, the SHIFT key is been used for a row or multi rows selection;
 
 Dragging:
-- the defaul action is copying;
-- to date, the SHIFT key must be pressed for moving action: first 
-select the items; then release the mouse buttons and then SHIFT+LEFT MOUSE BUTTON;
-- to date, SHIFT+CTRL+LMB make a link at destination;
+- the defaul action is copying; just keep pressed the LMB and start dragging;
+- to date, the SHIFT key must be pressed for the moving action: first 
+  select the items; after releasing the mouse buttons press first the LEFT MOUSE BUTTON
+  and then the SHIFT key; start dragging.
+- to date, SHIFT+CTRL+LMB make a link at destination; first press the LMB then
+  press SHIFT+CTRL;
 
 CTRL+s : the window size is saved; in fullscreen mode only this state is saved.
 
