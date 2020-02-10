@@ -1,4 +1,4 @@
-Version 20200208 release
+Version 20200210 release
 
 The zip package is just for the checksums and contains all the project files.
 
@@ -43,6 +43,3 @@ new tab, and files opened with the default program, if any, with a double click.
 - Progress dialog during copying operations: the current copying operation cannot be
 interrupted, only the following ones can be interrupted.
 - Delete (canc) key: selected items into the recycle bin if choosen so in the config file.
-
-What is not implemented and maybe never will be implemented:
-- the XDS protocol, due to lack of documentation.
