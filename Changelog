@@ -1,3 +1,7 @@
+* 20200213 release
+- added the ability to reload the current view by pressing the R key
+- little improvements
+- improved the assmime utility a lot
 * 20200210 release
 - the Paste action can be hidden (option in the config file: USE_PM)
 - some dialogs now can be resize
