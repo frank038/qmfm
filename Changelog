@@ -1,10 +1,12 @@
+* 20200214 release
+- improved the assmime utility
 * 20200213 release
 - added the ability to reload the current view by pressing the R key
 - little improvements
 - improved the assmime utility a lot
 * 20200210 release
 - the Paste action can be hidden (option in the config file: USE_PM)
-- some dialogs now can be resize
+- some dialogs now can be resized
 - little changes and improvements
 * 20200208 release
 - mouse middle button: opens the selected folder in the same view
@@ -70,6 +72,6 @@
 - some other little changes
 * 20191223 alpha 2
 - more on copying/cutting, expecially on links
-- a folder cannot be copied into itself or into its subfolders
+- a folder cannot be copied into itself or into one of its subfolders
 - implemented an optional delete function that bypass the trashcan
 - deleting and trashing required a confirmation from the user; the dialog also shows the items to be deleted or trashed 
