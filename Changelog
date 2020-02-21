@@ -1,3 +1,6 @@
+* 20200221 release B
+- added support for custom folder icon: from theme and icon (with full path)
+- the link to folder use the same custom icon
 * 20200221 release
 - added support for custom folder icon (thru .directory file)
 * 20200215 release
