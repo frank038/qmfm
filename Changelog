@@ -1,3 +1,5 @@
+* 20200221 release
+- added support for custom folder icon (thru .directory file)
 * 20200215 release
 - improved the utility assmime.py
 * 20200214 release
