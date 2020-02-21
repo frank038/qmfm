@@ -1,6 +1,9 @@
+
+* 20200222 release
+- folder custom icons: now an option in the config file
 * 20200221 release B
 - added support for custom folder icon: from theme and icon (with full path)
-- the link to folder use the same custom icon
+- the link to folder use the same custom icon of the parent folder
 * 20200221 release
 - added support for custom folder icon (thru .directory file)
 * 20200215 release
