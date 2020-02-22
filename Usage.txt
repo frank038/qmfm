@@ -17,3 +17,13 @@ Delete (canc) key: selected items into the recycle bin if choosen so in the conf
 
 Middle mouse button: opens the selected folder in the same view or
 in another tab, depending on the choise made in the config file.
+
+Folder custom icon
+To use a custom icon just put a hidden file named .directory
+in the choosen folder writing in it the following content:
+
+[Desktop Entry]
+Icon=ICON
+
+where ICON is either an icon name (without suffix) from the 
+current used theme or a custom icon (with full path and extension) 
