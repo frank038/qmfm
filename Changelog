@@ -1,4 +1,6 @@
-
+* 20200223 release
+- disabled the useless 'reload the currente view by pressing the R key'
+- added an example of the '.directory' file in the Usage.txt doc
 * 20200222 release
 - folder custom icons: now an option in the config file
 * 20200221 release B
