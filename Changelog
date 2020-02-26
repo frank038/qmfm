@@ -1,3 +1,8 @@
+* 20200226 release B
+- the program crashes after pressing the right mouse button 
+  if one application desktop file is malformed (solved)
+- the utility assmime.py crashes if one application desktop file 
+  is malformed (solved)
 * 20200226 release
 - improved the dialogs during the copying processes (both 'Paste' and 'Paste and Merge')
 * 20200223 release
