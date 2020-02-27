@@ -1,3 +1,5 @@
+* 20200227 release B
+- improvements in the trash_module
 * 20200227 release
 - reworked the 'Open with...'->'Other Program' dialog
 - added an option in the config file for choosing the old 'Open With...' 
