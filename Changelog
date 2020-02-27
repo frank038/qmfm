@@ -1,3 +1,7 @@
+* 20200227 release
+- reworked the 'Open with...'->'Other Program' dialog
+- added an option in the config file for choosing the old 'Open With...' 
+  dialog or the new style
 * 20200226 release B
 - the program crashes after pressing the right mouse button 
   if one application desktop file is malformed (solved)
