@@ -1,3 +1,8 @@
+* 20200228 release
+- added the history of the opened folders (and option in the config file)
+- the 'Open with...' dialog accepts a program name directly
+- improvements
+- no more features will be added, only bugs will be fixed if any
 * 20200227 release B
 - improvements in the trash_module
 * 20200227 release
