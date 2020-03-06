@@ -1,3 +1,6 @@
+* 20200306 release
+- improvements in the create_archive.py and 7z_extract.py modules
+- changed the history widget: from button/menu to combobox
 * 20200228 release
 - added the history of the opened folders (and option in the config file)
 - the 'Open with...' dialog accepts a program name directly
