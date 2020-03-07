@@ -1,3 +1,5 @@
+* 20200307 release
+- improvements
 * 20200306 release
 - improvements in the create_archive.py and 7z_extract.py modules
 - changed the history widget: from button/menu to combobox
