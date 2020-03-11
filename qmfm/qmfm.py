@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# version 20200309 release
+# version 20200311 release
 
 from PyQt5.QtCore import (QEvent,QObject,QUrl,QFileInfo,QRect,QStorageInfo,QMimeData,QMimeDatabase,QFile,QThread,Qt,pyqtSignal,QSize,QMargins,QDir,QByteArray,QItemSelection,QItemSelectionModel,QPoint)
 from PyQt5.QtWidgets import (QTextEdit,QSizePolicy,qApp,QBoxLayout,QLabel,QPushButton,QDesktopWidget,QApplication,QDialog,QGridLayout,QMessageBox,QLineEdit,QTabWidget,QWidget,QGroupBox,QComboBox,QCheckBox,QProgressBar,QListView,QFileSystemModel,QItemDelegate,QStyle,QFileIconProvider,QAbstractItemView,QFormLayout,QAction,QMenu)
@@ -4365,6 +4365,7 @@ class LView(QBoxLayout):
             #
             if ret.getValue():
                 TrashModule(list_items)
+                self.listview.viewport().update()
         
     # bypass the trashcan
     def fdeleteAction(self):
@@ -4384,6 +4385,7 @@ class LView(QBoxLayout):
             #
             if ret.getValue():
                 self.fdeleteItems(list_items)
+                self.listview.viewport().update()
     
     
     def fdeleteItems(self, listItems):
