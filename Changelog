@@ -1,3 +1,8 @@
+* 20200330
+- updated the 7z_extract.py module: added the ability to bypass certain mimetypes
+  (the mimetype list can be customized in the module)
+- added the tar_extract.py module: tar, tar.xz, tar.gz and tar.bzip2 archives
+  (symlinks are extracted as links; numbered backup)
 * 20200311 release
 - improvements
 * 20200309 release
