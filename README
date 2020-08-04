@@ -43,3 +43,11 @@ new tab, and files opened with the default program, if any, with a double click.
 - Progress dialog during copying operations: the current copying operation cannot be
 interrupted, only the following ones can be interrupted.
 - Delete (canc) key: selected items into the recycle bin if choosen so in the config file.
+
+Known issues:
+- in the /home directory is onto another disk partition the following change is needed for the trashcan to work properly:
+in the file qmfm2.py - line 4796,
+from
+if mount_point == "/":
+to
+if mount_point == "/" or mount_point == "/home":
