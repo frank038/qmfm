@@ -46,7 +46,7 @@ interrupted, only the following ones can be interrupted.
 
 Known issues:
 - in the /home directory is onto another disk partition the following change is needed for the trashcan to work properly:
-in the file qmfm2.py - line 4796,
+in the file qmfm.py - line 4796,
 from
 if mount_point == "/":
 to
