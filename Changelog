@@ -1,3 +1,6 @@
+* 20200922
+- recycle bin, if HOME is in another partition
+- various bugs about
 * 20200330
 - updated the 7z_extract.py module: added the ability to bypass certain mimetypes
   (the mimetype list can be customized in the module)
