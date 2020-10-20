@@ -22,7 +22,7 @@ ICON_SIZE2 = 48
 # space between items
 ITEM_SPACE = 25
 # font size to use
-FONT_SIZE = 12
+FONT_SIZE = 10
 # show delete context menu entry that bypass the trashcan: 0 no - 1 yes
 USE_DELETE = 1
 # use the Paste and Merge action - should be safe: 0 no - 1 yes - 2 yes and hide the Paste action
