@@ -1,3 +1,5 @@
+* 20201020
+- massive rework of the 'Paste and Merge' functionality
 * 20201019
 - Paste and Merge (from contextual menu):
   - add the 'Backup' option: the existent files at destination will be backuped (using the choised method)
