@@ -1,5 +1,5 @@
 # qmfm
-Version 20201020 release
+Version 20201020
 
 The zip package is just for the checksums and contains all the project files.
 
