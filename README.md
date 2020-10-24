@@ -1,5 +1,5 @@
 # qmfm
-Version 20201020
+Version 20201024
 
 The zip package is just for the checksums and contains all the project files.
 
@@ -46,3 +46,6 @@ interrupted, only the following ones can be interrupted.
 - Delete (canc) key: selected items into the recycle bin if choosen so in the config file.
 
 ![My image](https://github.com/frank038/qmfm/blob/master/screenshot.png)
+
+This is the dialog that appears when the 'Paste and Merge' action is called. The difference between 'Automatic' and 'Backup': both add a suffix to a file or folder if another item with the same name already exists at destination, Automatic add it to the item to be copied, Backup add it to the item at destination. 
+![My image](https://github.com/frank038/qmfm/blob/master/screenshot3.png)
