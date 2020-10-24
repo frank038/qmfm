@@ -26,7 +26,7 @@ FONT_SIZE = 10
 # show delete context menu entry that bypass the trashcan: 0 no - 1 yes
 USE_DELETE = 1
 # use the Paste and Merge action - should be safe: 0 no - 1 yes - 2 yes and hide the Paste action
-USE_PM = 1 
+USE_PM = 2 
 # load the trash module: 0 no - 1 yes
 USE_TRASH = 0
 # load the media module: 0 no - 1 yes
