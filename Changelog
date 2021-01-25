@@ -1,1 +1,2 @@
-* 20201027
+* 20210125
+- item creation date and time: in the config file the option to get them from python or bash
