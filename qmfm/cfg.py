@@ -40,8 +40,10 @@ USE_BACKGROUND_COLOUR = 1
 ORED = 235
 OGREEN = 235
 OBLUE = 235
-# icon theme name - the qt5ct program overrides this
-ICON_THEME = "breeze"
+# icon theme name - if the qt5ct program overrides this use ""
+ICON_THEME = ""
+# creation data and time of the item in the property dialog: 0 use os.stat - 1 use functions from bash (should be precise)
+DATE_TIME = 1
 
 ### needed by pythumb
 # border color of the thumbnails
